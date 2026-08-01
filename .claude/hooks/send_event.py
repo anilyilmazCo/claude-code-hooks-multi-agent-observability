@@ -67,7 +67,12 @@ def main():
     args = parser.parse_args()
     
     try:
-        # Read hook data from stdin
+        # Read hook data from stdin.
+        # Claude Code always writes UTF-8, but on Windows sys.stdin defaults to the
+        # ANSI code page (cp1254 for Turkish locale) -> Turkish text arrives
+        # double-encoded and reaches the dashboard as mojibake ("ÖLÜMCÜL" -> "Ã–LÃœMCÃœL").
+        if hasattr(sys.stdin, 'reconfigure'):
+            sys.stdin.reconfigure(encoding='utf-8', errors='replace')
         input_data = json.load(sys.stdin)
     except json.JSONDecodeError as e:
         print(f"Failed to parse JSON input: {e}", file=sys.stderr)
@@ -150,7 +155,7 @@ def main():
             # Read .jsonl file and convert to JSON array
             chat_data = []
             try:
-                with open(transcript_path, 'r') as f:
+                with open(transcript_path, 'r', encoding="utf-8", errors="replace") as f:
                     for line in f:
                         line = line.strip()
                         if line:

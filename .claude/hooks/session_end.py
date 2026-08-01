@@ -30,7 +30,7 @@ def log_session_end(input_data, reason):
 
     # Read existing log data or initialize empty list
     if log_file.exists():
-        with open(log_file, 'r') as f:
+        with open(log_file, 'r', encoding="utf-8", errors="replace") as f:
             try:
                 log_data = json.load(f)
             except (json.JSONDecodeError, ValueError):
@@ -48,7 +48,7 @@ def log_session_end(input_data, reason):
     log_data.append(log_entry)
 
     # Write back to file with formatting
-    with open(log_file, 'w') as f:
+    with open(log_file, 'w', encoding="utf-8", errors="replace") as f:
         json.dump(log_data, f, indent=2)
 
 
@@ -63,7 +63,7 @@ def save_session_statistics(input_data):
         message_count = 0
         if transcript_path and Path(transcript_path).exists():
             try:
-                with open(transcript_path, 'r') as f:
+                with open(transcript_path, 'r', encoding="utf-8", errors="replace") as f:
                     # JSONL format - count lines
                     message_count = sum(1 for _ in f)
             except Exception:
@@ -75,7 +75,7 @@ def save_session_statistics(input_data):
         stats_file = stats_dir / 'session_statistics.json'
 
         if stats_file.exists():
-            with open(stats_file, 'r') as f:
+            with open(stats_file, 'r', encoding="utf-8", errors="replace") as f:
                 try:
                     stats = json.load(f)
                 except (json.JSONDecodeError, ValueError):
@@ -90,7 +90,7 @@ def save_session_statistics(input_data):
             "message_count": message_count
         })
 
-        with open(stats_file, 'w') as f:
+        with open(stats_file, 'w', encoding="utf-8", errors="replace") as f:
             json.dump(stats, f, indent=2)
 
     except Exception:

@@ -315,6 +315,10 @@ def summarize_tool_input(tool_name, tool_input):
 def main():
     try:
         # Read JSON input from stdin
+        # Windows'ta sys.stdin yerel kod sayfasini kullanir (tr-TR: cp1254);
+        # Claude Code UTF-8 gonderir -> Turkce cift-kodlanip mojibake olur.
+        if hasattr(sys.stdin, 'reconfigure'):
+            sys.stdin.reconfigure(encoding='utf-8', errors='replace')
         input_data = json.load(sys.stdin)
 
         tool_name = input_data.get('tool_name', '')
@@ -346,7 +350,7 @@ def main():
 
         # Read existing log data or initialize empty list
         if log_path.exists():
-            with open(log_path, 'r') as f:
+            with open(log_path, 'r', encoding="utf-8", errors="replace") as f:
                 try:
                     log_data = json.load(f)
                 except (json.JSONDecodeError, ValueError):
@@ -367,7 +371,7 @@ def main():
         log_data.append(log_entry)
 
         # Write back to file with formatting
-        with open(log_path, 'w') as f:
+        with open(log_path, 'w', encoding="utf-8", errors="replace") as f:
             json.dump(log_data, f, indent=2)
 
         sys.exit(0)
