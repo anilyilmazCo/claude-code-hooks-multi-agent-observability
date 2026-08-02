@@ -4,40 +4,40 @@
       <div class="flex items-center gap-3 mobile:gap-2">
         <h3 class="text-base mobile:text-xs font-bold text-[var(--theme-primary)] drop-shadow-sm flex items-center">
           <span class="mr-1.5 mobile:mr-1 text-xl mobile:text-sm">📊</span>
-          <span class="mobile:hidden">Live Activity Pulse</span>
+          <span class="mobile:hidden">Canlı Etkinlik Nabzı</span>
         </h3>
         <div class="flex items-center gap-1.5 flex-wrap">
           <div
             class="flex items-center gap-1.5 px-2 py-1 bg-gradient-to-r from-[var(--theme-primary)]/10 to-[var(--theme-primary-light)]/10 rounded-lg border border-[var(--theme-primary)]/30 shadow-sm"
-            :title="`${uniqueAgentCount} active agent${uniqueAgentCount !== 1 ? 's' : ''}`"
+            :title="`${uniqueAgentCount} aktif ajan`"
           >
             <span class="text-lg mobile:text-base">👥</span>
             <span class="text-sm mobile:text-xs font-bold text-[var(--theme-primary)]">{{ uniqueAgentCount }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">agents</span>
+            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">ajan</span>
           </div>
           <div
             class="flex items-center gap-1.5 px-2 py-1 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm"
-            :title="`Total events in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : timeRange === '5m' ? '5 minutes' : '10 minutes'}`"
+            :title="`Son ${timeRange === '1m' ? '1 dakikadaki' : timeRange === '3m' ? '3 dakikadaki' : timeRange === '5m' ? '5 dakikadaki' : '10 dakikadaki'} toplam olay`"
           >
             <span class="text-lg mobile:text-base">⚡</span>
             <span class="text-sm mobile:text-xs font-bold text-[var(--theme-text-primary)]">{{ totalEventCount }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">events</span>
+            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">olay</span>
           </div>
           <div
             class="flex items-center gap-1.5 px-2 py-1 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm"
-            :title="`Total tool calls in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : timeRange === '5m' ? '5 minutes' : '10 minutes'}`"
+            :title="`Son ${timeRange === '1m' ? '1 dakikadaki' : timeRange === '3m' ? '3 dakikadaki' : timeRange === '5m' ? '5 dakikadaki' : '10 dakikadaki'} toplam araç çağrısı`"
           >
             <span class="text-lg mobile:text-base">🔧</span>
             <span class="text-sm mobile:text-xs font-bold text-[var(--theme-text-primary)]">{{ toolCallCount }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">tools</span>
+            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">araç</span>
           </div>
           <div
             class="flex items-center gap-1.5 px-2 py-1 bg-[var(--theme-bg-tertiary)] rounded-lg border border-[var(--theme-border-primary)] shadow-sm"
-            :title="`Average time between events in the last ${timeRange === '1m' ? '1 minute' : timeRange === '3m' ? '3 minutes' : timeRange === '5m' ? '5 minutes' : '10 minutes'}`"
+            :title="`Son ${timeRange === '1m' ? '1 dakikadaki' : timeRange === '3m' ? '3 dakikadaki' : timeRange === '5m' ? '5 dakikadaki' : '10 dakikadaki'} olaylar arası ortalama süre`"
           >
             <span class="text-lg mobile:text-base">🕐</span>
             <span class="text-sm mobile:text-xs font-bold text-[var(--theme-text-primary)]">{{ formatGap(eventTimingMetrics.avgGap) }}</span>
-            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">avg gap</span>
+            <span class="text-xs mobile:text-[10px] text-[var(--theme-text-tertiary)] font-medium mobile:hidden">ort. aralık</span>
           </div>
         </div>
       </div>
@@ -85,7 +85,7 @@
       >
         <p class="text-[var(--theme-text-tertiary)] mobile:text-sm text-base font-semibold">
           <span class="mr-1.5 text-base">⏳</span>
-          Waiting for events...
+          Olaylar bekleniyor...
         </p>
       </div>
     </div>

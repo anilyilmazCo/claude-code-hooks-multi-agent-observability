@@ -1,6 +1,6 @@
 // Theme type definitions
 
-export type ThemeName = 'light' | 'dark' | 'modern' | 'earth' | 'glass' | 'high-contrast' | 'dark-blue' | 'colorblind-friendly' | 'ocean' | 'midnight-purple' | 'sunset-orange' | 'mint-fresh';
+export type ThemeName = 'light' | 'dark' | 'modern' | 'earth' | 'glass' | 'high-contrast' | 'dark-blue' | 'colorblind-friendly' | 'ocean' | 'midnight-purple' | 'sunset-orange' | 'mint-fresh' | 'komuta';
 
 export interface ThemeColors {
   // Primary colors
@@ -189,6 +189,7 @@ export const PREDEFINED_THEME_NAMES: ThemeName[] = [
   'midnight-purple',
   'sunset-orange',
   'mint-fresh',
+  'komuta',
 ];
 
 // Color validation regex

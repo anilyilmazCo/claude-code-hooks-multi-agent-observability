@@ -546,3 +546,45 @@
 .theme-active:active {
   background-color: var(--theme-active-bg);
 }
+
+/* Komuta theme - varsayilan: komuta.css'teki sabit koyu enstruman paleti
+   ile birebir eslenir (--zemin/--panel/--cizgi/--metin/--akis/vb.) */
+.theme-komuta {
+  /* Primary colors (şeritteki --akis / camgöbeği) */
+  --theme-primary: #35E0D8;
+  --theme-primary-hover: #5CEAE3;
+  --theme-primary-light: #123B3A;
+  --theme-primary-dark: #0F5C57;
+
+  /* Background colors: bg-primary->--zemin, bg-secondary->--panel, bg-tertiary/quaternary bir ton acik */
+  --theme-bg-primary: #080B12;
+  --theme-bg-secondary: #0E141F;
+  --theme-bg-tertiary: #151C2A;
+  --theme-bg-quaternary: #1C2635;
+
+  /* Text colors */
+  --theme-text-primary: #D8E0EA;
+  --theme-text-secondary: #6E7C90;
+  --theme-text-tertiary: #56637A;
+  --theme-text-quaternary: #3E4A5E;
+
+  /* Border colors (--cizgi) */
+  --theme-border-primary: #1C2635;
+  --theme-border-secondary: #26324A;
+  --theme-border-tertiary: #6E7C90;
+
+  /* Accent colors: success->--akis, warning->--bekleyen, error->--durdu, info->--hakem */
+  --theme-accent-success: #35E0D8;
+  --theme-accent-warning: #FFB627;
+  --theme-accent-error: #FF4D5A;
+  --theme-accent-info: #A78BFA;
+
+  /* Shadow colors */
+  --theme-shadow: rgba(0, 0, 0, 0.5);
+  --theme-shadow-lg: rgba(0, 0, 0, 0.75);
+
+  /* Interactive states */
+  --theme-hover-bg: rgba(255, 255, 255, 0.05);
+  --theme-active-bg: rgba(255, 255, 255, 0.1);
+  --theme-focus-ring: #35E0D8;
+}

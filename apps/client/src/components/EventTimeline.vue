@@ -3,7 +3,7 @@
     <!-- Fixed Header -->
     <div class="px-3 py-4 mobile:py-2 bg-gradient-to-r from-[var(--theme-bg-primary)] to-[var(--theme-bg-secondary)] relative z-10" style="box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3), 0 8px 25px -5px rgba(0, 0, 0, 0.2);">
       <h2 class="text-2xl mobile:text-lg font-bold text-[var(--theme-primary)] text-center drop-shadow-sm">
-        Agent Event Stream
+        Ajan Olay Akışı
       </h2>
 
       <!-- Agent/App Tags Row -->
@@ -22,7 +22,7 @@
             borderColor: getHexColorForApp(getAppNameFromAgentId(agentId)),
             backgroundColor: getHexColorForApp(getAppNameFromAgentId(agentId)) + (isAgentActive(agentId) ? '33' : '1a')
           }"
-          :title="`${isAgentActive(agentId) ? 'Active: Click to add' : 'Sleeping: No recent events. Click to add'} ${agentId} to comparison lanes`"
+          :title="`${isAgentActive(agentId) ? 'Aktif' : 'Uykuda: son olay yok'} — ${agentId} şeridini karşılaştırmaya eklemek için tıkla`"
         >
           <span class="mr-2">{{ isAgentActive(agentId) ? '✨' : '😴' }}</span>
           <span class="font-mono text-sm">{{ agentId }}</span>
@@ -37,7 +37,7 @@
               type="text"
               :value="searchPattern"
               @input="updateSearchPattern(($event.target as HTMLInputElement).value)"
-              placeholder="Search events (regex enabled)... e.g., 'tool.*error' or '^GET'"
+              placeholder="Olaylarda ara (regex destekli)... örn. 'tool.*error' ya da '^GET'"
               :class="[
                 'w-full px-3 mobile:px-2 py-2 mobile:py-1.5 rounded-lg text-sm mobile:text-xs font-mono border-2 transition-all duration-200',
                 'bg-[var(--theme-bg-tertiary)] text-[var(--theme-text-primary)] placeholder-[var(--theme-text-quaternary)]',
@@ -50,8 +50,8 @@
               v-if="searchPattern"
               @click="clearSearch"
               class="absolute right-2 top-1/2 transform -translate-y-1/2 text-[var(--theme-text-tertiary)] hover:text-[var(--theme-primary)] transition-colors duration-200"
-              title="Clear search"
-              aria-label="Clear search"
+              title="Aramayı temizle"
+              aria-label="Aramayı temizle"
             >
               ✕
             </button>
@@ -92,8 +92,8 @@
       
       <div v-if="filteredEvents.length === 0" class="text-center py-8 mobile:py-6 text-[var(--theme-text-tertiary)]">
         <div class="text-4xl mobile:text-3xl mb-3">🔳</div>
-        <p class="text-lg mobile:text-base font-semibold text-[var(--theme-primary)] mb-1.5">No events to display</p>
-        <p class="text-base mobile:text-sm">Events will appear here as they are received</p>
+        <p class="text-lg mobile:text-base font-semibold text-[var(--theme-primary)] mb-1.5">Gösterilecek olay yok</p>
+        <p class="text-base mobile:text-sm">Olaylar geldikçe burada görünecek</p>
       </div>
     </div>
   </div>

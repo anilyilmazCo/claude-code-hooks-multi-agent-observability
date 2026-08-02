@@ -411,13 +411,48 @@ const PREDEFINED_THEMES: Record<ThemeName, PredefinedTheme> = {
       activeBg: 'rgba(13, 148, 136, 0.15)',
       focusRing: '#0d9488'
     }
+  },
+  komuta: {
+    name: 'komuta',
+    displayName: 'Komuta',
+    description: 'Komuta merkezinin sabit koyu enstrüman paleti (varsayılan)',
+    cssClass: 'theme-komuta',
+    preview: { primary: '#080B12', secondary: '#0E141F', accent: '#35E0D8' },
+    colors: {
+      // --theme-primary* şeritteki --akis (camgöbeği) üzerine kurulu
+      primary: '#35E0D8',
+      primaryHover: '#5CEAE3',
+      primaryLight: '#123B3A',
+      primaryDark: '#0F5C57',
+      // bg-primary→--zemin, bg-secondary/tertiary→--panel ve bir ton acigi
+      bgPrimary: '#080B12',
+      bgSecondary: '#0E141F',
+      bgTertiary: '#151C2A',
+      bgQuaternary: '#1C2635',
+      textPrimary: '#D8E0EA',
+      textSecondary: '#6E7C90',
+      textTertiary: '#56637A',
+      textQuaternary: '#3E4A5E',
+      borderPrimary: '#1C2635',
+      borderSecondary: '#26324A',
+      borderTertiary: '#6E7C90',
+      accentSuccess: '#35E0D8',
+      accentWarning: '#FFB627',
+      accentError: '#FF4D5A',
+      accentInfo: '#A78BFA',
+      shadow: 'rgba(0, 0, 0, 0.5)',
+      shadowLg: 'rgba(0, 0, 0, 0.75)',
+      hoverBg: 'rgba(255, 255, 255, 0.05)',
+      activeBg: 'rgba(255, 255, 255, 0.1)',
+      focusRing: '#35E0D8'
+    }
   }
 };
 
 export function useThemes() {
   // State
   const state = ref<ThemeState>({
-    currentTheme: 'light',
+    currentTheme: 'komuta',
     customThemes: [],
     isCustomTheme: false,
     isLoading: false,
@@ -474,8 +509,9 @@ export function useThemes() {
     if (themeData) {
       document.documentElement.classList.add(themeData.cssClass);
       
-      // For backward compatibility with existing dark mode
-      if (themeName === 'dark') {
+      // For backward compatibility with existing dark mode (also drives
+      // Tailwind's dark: variants used by modals like ThemeManager/ChatTranscript)
+      if (themeName === 'dark' || themeName === 'komuta') {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
@@ -714,9 +750,9 @@ export function useThemes() {
     if (savedTheme) {
       setTheme(savedTheme);
     } else {
-      // Detect system preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(prefersDark ? 'dark' : 'light');
+      // Komuta merkezinin varsayilan yüzü: sabit koyu enstruman paleti.
+      // Kullanici ThemeManager'dan istedigi an light/dark/vb'ye gecebilir.
+      setTheme('komuta');
     }
   };
 

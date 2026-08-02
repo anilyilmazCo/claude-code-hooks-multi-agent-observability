@@ -39,6 +39,16 @@ export interface HookEvent {
   // NEW: Optional HITL data
   humanInTheLoop?: HumanInTheLoop;
   humanInTheLoopStatus?: HumanInTheLoopStatus;
+
+  // Legacy/optional fields referenced by useEventSearch.ts (pre-existing,
+  // kept optional so the search composable type-checks without changing
+  // its runtime behavior).
+  model?: string;
+  tool_name?: string;
+  tool_command?: string;
+  tool_file?: { path?: string };
+  hitl_question?: string;
+  hitl_permission?: string;
 }
 
 export interface FilterOptions {

@@ -1,142 +1,167 @@
 <template>
-  <div class="h-screen flex flex-col bg-[var(--theme-bg-secondary)]">
-    <!-- Header with Primary Theme Colors -->
-    <header class="short:hidden bg-gradient-to-r from-[var(--theme-primary)] to-[var(--theme-primary-light)] shadow-lg border-b-2 border-[var(--theme-primary-dark)]">
-      <div class="px-3 py-4 mobile:py-1.5 mobile:px-2 flex items-center justify-between mobile:gap-2">
-        <!-- Title Section - Hidden on mobile -->
-        <div class="mobile:hidden">
-          <h1 class="text-2xl font-bold text-white drop-shadow-lg">
-            Multi-Agent Observability
-          </h1>
-        </div>
+  <div class="h-screen flex flex-col bg-[var(--zemin)] text-[var(--metin)]">
+    <!-- Üst şerit: her zaman görünür enstrüman kadranı -->
+    <UstSerit :events="events" />
 
-        <!-- Connection Status -->
+    <!-- Sekmeler -->
+    <nav class="shrink-0 flex overflow-x-auto border-b border-[var(--cizgi)] bg-[var(--panel)]" role="tablist" aria-label="Panel sekmeleri">
+      <button
+        v-for="sekme in sekmeler"
+        :key="sekme.id"
+        role="tab"
+        :aria-selected="aktifSekme === sekme.id"
+        :tabindex="aktifSekme === sekme.id ? 0 : -1"
+        @click="sekmeSec(sekme.id)"
+        class="px-4 py-2.5 mobile:px-3 mobile:py-2 text-xs tracking-[0.1em] uppercase font-semibold shrink-0 border-b-2 transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[var(--akis)] focus-visible:-outline-offset-2"
+        :class="aktifSekme === sekme.id
+          ? 'border-[var(--akis)] text-[var(--metin)]'
+          : 'border-transparent text-[var(--metin-soluk)] hover:text-[var(--metin)]'"
+      >
+        {{ sekme.etiket }}
+      </button>
+    </nav>
+
+    <!-- KOMUTA: mevcut olay akışı ekranı, olduğu gibi -->
+    <template v-if="aktifSekme === 'komuta'">
+      <!-- Araç çubuğu: bağlantı durumu + olay sayısı + eylemler (eski başlığın yerini alır) -->
+      <div class="short:hidden flex items-center justify-between px-3 py-2 mobile:px-2 mobile:py-1.5 gap-2 bg-[var(--theme-bg-primary)] border-b border-[var(--theme-border-primary)]">
         <div class="flex items-center mobile:space-x-1 space-x-1.5">
           <div v-if="isConnected" class="flex items-center mobile:space-x-0.5 space-x-1.5">
             <span class="relative flex mobile:h-2 mobile:w-2 h-3 w-3">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span class="relative inline-flex rounded-full mobile:h-2 mobile:w-2 h-3 w-3 bg-green-500"></span>
             </span>
-            <span class="text-base mobile:text-xs text-white font-semibold drop-shadow-md mobile:hidden">Connected</span>
+            <span class="text-sm mobile:text-xs text-[var(--theme-text-primary)] font-semibold mobile:hidden">BAĞLI</span>
           </div>
           <div v-else class="flex items-center mobile:space-x-0.5 space-x-1.5">
             <span class="relative flex mobile:h-2 mobile:w-2 h-3 w-3">
               <span class="relative inline-flex rounded-full mobile:h-2 mobile:w-2 h-3 w-3 bg-red-500"></span>
             </span>
-            <span class="text-base mobile:text-xs text-white font-semibold drop-shadow-md mobile:hidden">Disconnected</span>
+            <span class="text-sm mobile:text-xs text-[var(--theme-text-primary)] font-semibold mobile:hidden">KOPUK</span>
           </div>
-        </div>
-
-        <!-- Event Count and Theme Toggle -->
-        <div class="flex items-center mobile:space-x-1 space-x-2">
-          <span class="text-base mobile:text-xs text-white font-semibold drop-shadow-md bg-[var(--theme-primary-dark)] mobile:px-2 mobile:py-0.5 px-3 py-1.5 rounded-full border border-white/30">
+          <span class="text-sm mobile:text-xs text-[var(--theme-text-primary)] font-semibold bg-[var(--theme-bg-tertiary)] mobile:px-2 mobile:py-0.5 px-2.5 py-1 rounded-full border border-[var(--theme-border-primary)]">
             {{ events.length }}
           </span>
+        </div>
 
-          <!-- Clear Button -->
+        <div class="flex items-center mobile:space-x-1 space-x-2">
           <button
             @click="handleClearClick"
-            class="p-3 mobile:p-1 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 border border-white/30 hover:border-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl"
-            title="Clear events"
+            class="p-2 mobile:p-1 rounded-lg bg-[var(--theme-bg-tertiary)] hover:bg-[var(--theme-bg-quaternary)] transition-all duration-200 border border-[var(--theme-border-primary)]"
+            title="Olayları temizle"
           >
-            <span class="text-2xl mobile:text-base">🗑️</span>
+            <span class="text-lg mobile:text-base">🗑️</span>
           </button>
-
-          <!-- Filters Toggle Button -->
           <button
             @click="showFilters = !showFilters"
-            class="p-3 mobile:p-1 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 border border-white/30 hover:border-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl"
-            :title="showFilters ? 'Hide filters' : 'Show filters'"
+            class="p-2 mobile:p-1 rounded-lg bg-[var(--theme-bg-tertiary)] hover:bg-[var(--theme-bg-quaternary)] transition-all duration-200 border border-[var(--theme-border-primary)]"
+            :title="showFilters ? 'Filtreleri gizle' : 'Filtreleri göster'"
           >
-            <span class="text-2xl mobile:text-base">📊</span>
+            <span class="text-lg mobile:text-base">📊</span>
           </button>
-
-          <!-- Theme Manager Button -->
           <button
             @click="handleThemeManagerClick"
-            class="p-3 mobile:p-1 rounded-lg bg-white/20 hover:bg-white/30 transition-all duration-200 border border-white/30 hover:border-white/50 backdrop-blur-sm shadow-lg hover:shadow-xl"
-            title="Open theme manager"
+            class="p-2 mobile:p-1 rounded-lg bg-[var(--theme-bg-tertiary)] hover:bg-[var(--theme-bg-quaternary)] transition-all duration-200 border border-[var(--theme-border-primary)]"
+            title="Tema yöneticisini aç"
           >
-            <span class="text-2xl mobile:text-base">🎨</span>
+            <span class="text-lg mobile:text-base">🎨</span>
           </button>
         </div>
       </div>
-    </header>
-    
-    <!-- Filters -->
-    <FilterPanel
-      v-if="showFilters"
-      class="short:hidden"
-      :filters="filters"
-      @update:filters="filters = $event"
-    />
-    
-    <!-- Live Pulse Chart -->
-    <LivePulseChart
-      :events="events"
-      :filters="filters"
-      @update-unique-apps="uniqueAppNames = $event"
-      @update-all-apps="allAppNames = $event"
-      @update-time-range="currentTimeRange = $event"
-    />
 
-    <!-- Agent Swim Lane Container (below pulse chart, full width, hidden when empty) -->
-    <div v-if="selectedAgentLanes.length > 0" class="w-full bg-[var(--theme-bg-secondary)] px-3 py-4 mobile:px-2 mobile:py-2 overflow-hidden">
-      <AgentSwimLaneContainer
-        :selected-agents="selectedAgentLanes"
-        :events="events"
-        :time-range="currentTimeRange"
-        @update:selected-agents="selectedAgentLanes = $event"
+      <!-- Filtreler -->
+      <FilterPanel
+        v-if="showFilters"
+        class="short:hidden"
+        :filters="filters"
+        @update:filters="filters = $event"
       />
-    </div>
-    
-    <!-- Timeline -->
-    <div class="flex flex-col flex-1 overflow-hidden">
-      <EventTimeline
+
+      <!-- Canlı Nabız Grafiği -->
+      <LivePulseChart
         :events="events"
         :filters="filters"
-        :unique-app-names="uniqueAppNames"
-        :all-app-names="allAppNames"
-        v-model:stick-to-bottom="stickToBottom"
-        @select-agent="toggleAgentLane"
+        @update-unique-apps="uniqueAppNames = $event"
+        @update-all-apps="allAppNames = $event"
+        @update-time-range="currentTimeRange = $event"
       />
-    </div>
-    
-    <!-- Stick to bottom button -->
-    <StickScrollButton
-      class="short:hidden"
-      :stick-to-bottom="stickToBottom"
-      @toggle="stickToBottom = !stickToBottom"
-    />
-    
-    <!-- Error message -->
-    <div
-      v-if="error"
-      class="fixed bottom-4 left-4 mobile:bottom-3 mobile:left-3 mobile:right-3 bg-red-100 border border-red-400 text-red-700 px-3 py-2 mobile:px-2 mobile:py-1.5 rounded mobile:text-xs"
-    >
-      {{ error }}
-    </div>
-    
-    <!-- Theme Manager -->
-    <ThemeManager
-      :is-open="showThemeManager"
-      @close="showThemeManager = false"
+
+      <!-- Ajan Şerit Karşılaştırma (nabız grafiğinin altında, boşken gizli) -->
+      <div v-if="selectedAgentLanes.length > 0" class="w-full bg-[var(--theme-bg-secondary)] px-3 py-4 mobile:px-2 mobile:py-2 overflow-hidden">
+        <AgentSwimLaneContainer
+          :selected-agents="selectedAgentLanes"
+          :events="events"
+          :time-range="currentTimeRange"
+          @update:selected-agents="selectedAgentLanes = $event"
+        />
+      </div>
+
+      <!-- Zaman Akışı -->
+      <div class="flex flex-col flex-1 overflow-hidden">
+        <EventTimeline
+          :events="events"
+          :filters="filters"
+          :unique-app-names="uniqueAppNames"
+          :all-app-names="allAppNames"
+          v-model:stick-to-bottom="stickToBottom"
+          @select-agent="toggleAgentLane"
+        />
+      </div>
+
+      <!-- Alta yapış düğmesi -->
+      <StickScrollButton
+        class="short:hidden"
+        :stick-to-bottom="stickToBottom"
+        @toggle="stickToBottom = !stickToBottom"
+      />
+
+      <!-- Hata mesajı -->
+      <div
+        v-if="error"
+        class="fixed bottom-4 left-4 mobile:bottom-3 mobile:left-3 mobile:right-3 bg-red-100 border border-red-400 text-red-700 px-3 py-2 mobile:px-2 mobile:py-1.5 rounded mobile:text-xs"
+      >
+        {{ error }}
+      </div>
+
+      <!-- Tema Yöneticisi -->
+      <ThemeManager
+        :is-open="showThemeManager"
+        @close="showThemeManager = false"
+      />
+
+      <!-- Bildirimler -->
+      <ToastNotification
+        v-for="(toast, index) in toasts"
+        :key="toast.id"
+        :index="index"
+        :agent-name="toast.agentName"
+        :agent-color="toast.agentColor"
+        @dismiss="dismissToast(toast.id)"
+      />
+    </template>
+
+    <!-- ARENA: v0 boş iskelet -->
+    <BosSekme
+      v-else-if="aktifSekme === 'arena'"
+      mesaj="Arena henüz bağlanmadı — ileride ajanların kural setlerini yarıştırdığı canlı karşılaştırmalar burada görünecek."
     />
 
-    <!-- Toast Notifications -->
-    <ToastNotification
-      v-for="(toast, index) in toasts"
-      :key="toast.id"
-      :index="index"
-      :agent-name="toast.agentName"
-      :agent-color="toast.agentColor"
-      @dismiss="dismissToast(toast.id)"
+    <!-- BANT: v0 boş iskelet -->
+    <BosSekme
+      v-else-if="aktifSekme === 'bant'"
+      mesaj="Şerit ilerlemesi henüz bağlanmadı — L0/L1 durumu `lanes/` dosyalarından okunacak."
+    />
+
+    <!-- KÜTÜPHANE: v0 boş iskelet -->
+    <BosSekme
+      v-else-if="aktifSekme === 'kutuphane'"
+      mesaj="Kütüphane henüz bağlanmadı — doğrulanmış prompt/md arşivi (prompt-vault) buradan taranabilir olacak."
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import type { TimeRange } from './types';
 import { useWebSocket } from './composables/useWebSocket';
 import { useThemes } from './composables/useThemes';
@@ -148,12 +173,14 @@ import LivePulseChart from './components/LivePulseChart.vue';
 import ThemeManager from './components/ThemeManager.vue';
 import ToastNotification from './components/ToastNotification.vue';
 import AgentSwimLaneContainer from './components/AgentSwimLaneContainer.vue';
+import UstSerit from './components/UstSerit.vue';
+import BosSekme from './components/BosSekme.vue';
 import { WS_URL } from './config';
 
 // WebSocket connection
 const { events, isConnected, error, clearEvents } = useWebSocket(WS_URL);
 
-// Theme management (sets up theme system)
+// Theme management (sets up theme system for the KOMUTA content)
 useThemes();
 
 // Event colors
@@ -174,6 +201,42 @@ const uniqueAppNames = ref<string[]>([]); // Apps active in current time window
 const allAppNames = ref<string[]>([]); // All apps ever seen in session
 const selectedAgentLanes = ref<string[]>([]);
 const currentTimeRange = ref<TimeRange>('1m'); // Current time range from LivePulseChart
+
+// --- Sekmeler: durum URL hash'inde tutulur (#komuta), yenilemede kaybolmaz ---
+type SekmeId = 'komuta' | 'arena' | 'bant' | 'kutuphane';
+const sekmeler: { id: SekmeId; etiket: string }[] = [
+  { id: 'komuta', etiket: 'KOMUTA' },
+  { id: 'arena', etiket: 'ARENA' },
+  { id: 'bant', etiket: 'BANT' },
+  { id: 'kutuphane', etiket: 'KÜTÜPHANE' }
+];
+const GECERLI_SEKMELER = sekmeler.map(s => s.id);
+
+function hashtenSekmeOku(): SekmeId {
+  const h = window.location.hash.replace('#', '');
+  return (GECERLI_SEKMELER as string[]).includes(h) ? (h as SekmeId) : 'komuta';
+}
+
+const aktifSekme = ref<SekmeId>(hashtenSekmeOku());
+
+function sekmeSec(id: SekmeId) {
+  aktifSekme.value = id;
+  window.location.hash = id;
+}
+
+function hashDegisti() {
+  aktifSekme.value = hashtenSekmeOku();
+}
+
+onMounted(() => {
+  if (!window.location.hash) {
+    history.replaceState(null, '', `#${aktifSekme.value}`);
+  }
+  window.addEventListener('hashchange', hashDegisti);
+});
+onUnmounted(() => {
+  window.removeEventListener('hashchange', hashDegisti);
+});
 
 // Toast notifications
 interface Toast {

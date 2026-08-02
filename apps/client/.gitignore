@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# JARVIS panel durum verisi - panel-veri.ps1 uretir, commitlenmez
+public/hq-durum.json

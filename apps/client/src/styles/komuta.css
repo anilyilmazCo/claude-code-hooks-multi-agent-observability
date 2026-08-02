@@ -1,0 +1,44 @@
+/* Komuta Merkezi - sabit enstruman paleti.
+   Tema sisteminden (--theme-*) bagimsizdir: KOMUTA sekmesinin icerigi
+   (LivePulseChart, EventTimeline, vb.) --theme-* degiskenleriyle tema
+   degistirmeye devam eder; bu dosya sadece yeni dis kabugu (ust serit,
+   sekmeler, self-healing rozeti) icin sabit koyu-zemin + neon paletidir. */
+:root {
+  --zemin: #080B12;
+  --panel: #0E141F;
+  --cizgi: #1C2635;
+  --metin: #D8E0EA;
+  --metin-soluk: #6E7C90;
+  --akis: #35E0D8;
+  --bekleyen: #FFB627;
+  --durdu: #FF4D5A;
+  --hakem: #A78BFA;
+
+  /* Ust serit + sekme cubugunun toplam yuksekligi (toast'lar bunun ALTINDAN
+     baslasin diye). Tek satirlik serit + sekme cubugu icin sabit tahmin;
+     serit iceriği 2 satira sarilirsa bu deger de buyutulmeli. */
+  --ust-serit-yukseklik: 128px;
+}
+
+.km-mono {
+  font-family: 'Cascadia Code', 'Cascadia Mono', Consolas, ui-monospace, monospace;
+}
+
+.km-serit {
+  scrollbar-width: thin;
+}
+
+.km-rozet--silahli {
+  animation: km-nabiz 2s ease-in-out infinite;
+}
+
+@keyframes km-nabiz {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(53, 224, 216, 0.35); }
+  50% { box-shadow: 0 0 14px 4px rgba(53, 224, 216, 0.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .km-rozet--silahli {
+    animation: none;
+  }
+}
