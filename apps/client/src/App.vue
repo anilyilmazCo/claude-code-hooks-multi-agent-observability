@@ -140,11 +140,8 @@
       />
     </template>
 
-    <!-- ARENA: v0 boş iskelet -->
-    <BosSekme
-      v-else-if="aktifSekme === 'arena'"
-      mesaj="Arena henüz bağlanmadı — ileride ajanların kural setlerini yarıştırdığı canlı karşılaştırmalar burada görünecek."
-    />
+    <!-- ARENA -->
+    <ArenaPaneli v-else-if="aktifSekme === 'arena'" />
 
     <!-- BANT: v0 boş iskelet -->
     <BosSekme
@@ -175,6 +172,7 @@ import ToastNotification from './components/ToastNotification.vue';
 import AgentSwimLaneContainer from './components/AgentSwimLaneContainer.vue';
 import UstSerit from './components/UstSerit.vue';
 import BosSekme from './components/BosSekme.vue';
+import ArenaPaneli from './components/arena/ArenaPaneli.vue';
 import { WS_URL } from './config';
 
 // WebSocket connection

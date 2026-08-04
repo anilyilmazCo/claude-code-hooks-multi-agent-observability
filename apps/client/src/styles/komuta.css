@@ -14,6 +14,11 @@
   --durdu: #FF4D5A;
   --hakem: #A78BFA;
 
+  /* ARENA kimlik+makas rengi. Durum rengi DEGIL - yalniz kimlik cizgisi,
+     makas sayisi/bari ve makas tablosu Delta sutununda kullanilir. */
+  --arena: #8AE234;
+  --arena-dolgu: rgba(138, 226, 52, 0.12);
+
   /* Ust serit + sekme cubugunun toplam yuksekligi (toast'lar bunun ALTINDAN
      baslasin diye). Tek satirlik serit + sekme cubugu icin sabit tahmin;
      serit iceriği 2 satira sarilirsa bu deger de buyutulmeli. */
@@ -39,6 +44,22 @@
 
 @media (prefers-reduced-motion: reduce) {
   .km-rozet--silahli {
+    animation: none;
+  }
+}
+
+/* ARENA: fabrika hatti baglayicisinin "akiyor" durumu - kayan kesik cizgi. */
+.km-hat-akis {
+  stroke-dasharray: 4 4;
+  animation: km-hat-kay 1.2s linear infinite;
+}
+
+@keyframes km-hat-kay {
+  to { stroke-dashoffset: -8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .km-hat-akis {
     animation: none;
   }
 }
