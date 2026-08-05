@@ -143,6 +143,9 @@
     <!-- ARENA -->
     <ArenaPaneli v-else-if="aktifSekme === 'arena'" />
 
+    <!-- ARENA STİL v2: specs/ARENA-SPEC-v2.md görsel sistem kılavuzu -->
+    <StilKilavuzuV2 v-else-if="aktifSekme === 'stil-v2'" />
+
     <!-- BANT: v0 boş iskelet -->
     <BosSekme
       v-else-if="aktifSekme === 'bant'"
@@ -173,6 +176,7 @@ import AgentSwimLaneContainer from './components/AgentSwimLaneContainer.vue';
 import UstSerit from './components/UstSerit.vue';
 import BosSekme from './components/BosSekme.vue';
 import ArenaPaneli from './components/arena/ArenaPaneli.vue';
+import StilKilavuzuV2 from './components/arena/StilKilavuzuV2.vue';
 import { WS_URL } from './config';
 
 // WebSocket connection
@@ -201,10 +205,11 @@ const selectedAgentLanes = ref<string[]>([]);
 const currentTimeRange = ref<TimeRange>('1m'); // Current time range from LivePulseChart
 
 // --- Sekmeler: durum URL hash'inde tutulur (#komuta), yenilemede kaybolmaz ---
-type SekmeId = 'komuta' | 'arena' | 'bant' | 'kutuphane';
+type SekmeId = 'komuta' | 'arena' | 'stil-v2' | 'bant' | 'kutuphane';
 const sekmeler: { id: SekmeId; etiket: string }[] = [
   { id: 'komuta', etiket: 'KOMUTA' },
   { id: 'arena', etiket: 'ARENA' },
+  { id: 'stil-v2', etiket: 'STİL v2' },
   { id: 'bant', etiket: 'BANT' },
   { id: 'kutuphane', etiket: 'KÜTÜPHANE' }
 ];

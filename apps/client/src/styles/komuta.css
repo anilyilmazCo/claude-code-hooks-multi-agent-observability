@@ -23,6 +23,20 @@
      baslasin diye). Tek satirlik serit + sekme cubugu icin sabit tahmin;
      serit iceriği 2 satira sarilirsa bu deger de buyutulmeli. */
   --ust-serit-yukseklik: 128px;
+
+  /* ARENA-SPEC-v2.md SS.1: LIG KIMLIK RENKLERI. Durum rengi DEGIL - yalniz
+     lig aidiyeti. Hicbiri durum renklerinin (akis/bekleyen/durdu/hakem) hue
+     ailesinde degil; kalite bilgisi hep durum renklerinden gelir, lig
+     renginden degil (bkz. spec SS5.1 kural 1). */
+  --lig-retail:        #E85D9E;
+  --lig-yari:          #4C9AFF;
+  --lig-kurumsal:      #D9C89A;
+  --lig-baseline:      #8494AB;
+
+  --lig-retail-dolgu:   rgba(232,  93, 158, 0.12);
+  --lig-yari-dolgu:     rgba( 76, 154, 255, 0.12);
+  --lig-kurumsal-dolgu: rgba(217, 200, 154, 0.12);
+  --lig-baseline-dolgu: rgba(132, 148, 171, 0.12);
 }
 
 .km-mono {
