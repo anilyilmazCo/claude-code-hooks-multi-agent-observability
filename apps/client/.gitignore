@@ -25,3 +25,6 @@ dist-ssr
 
 # JARVIS panel durum verisi - panel-veri.ps1 uretir, commitlenmez
 public/hq-durum.json
+
+# Arena filo durum verisi - code/arena/calistir.py uretir, commitlenmez
+public/arena-durum.json
