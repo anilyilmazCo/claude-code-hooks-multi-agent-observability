@@ -1,5 +1,10 @@
 <template>
-  <div class="flex-1 overflow-y-auto px-5 py-4 mobile:px-3 mobile:py-3 space-y-4 bg-[var(--zemin)]">
+  <div class="relative flex-1 flex flex-col overflow-hidden bg-[var(--zemin)]">
+    <!-- Boot sekansı verinin üstüne biner, veriyi BEKLEMEZ (spec §5.8) -
+         içerik altta zaten render olur, sekans yalnız görsel olarak örter. -->
+    <BootSekansi :terazi="durum.terazi" />
+    <GeciciKanitBandi :aktif-varlik="aktifVarlik" />
+    <div class="flex-1 overflow-y-auto px-5 py-4 mobile:px-3 mobile:py-3 space-y-4">
     <!-- Kunye + hukuk satiri -->
     <div>
       <div class="flex items-baseline justify-between gap-2 flex-wrap">
@@ -40,15 +45,19 @@
         mesaj="Arena filosu henüz kurulmadı — kollar bağlandığında her biri burada kendi üretim hattıyla görünecek."
       />
       <div v-else class="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-        <KolKarti v-for="(kol, i) in durum.kollar" :key="kol.id ?? i" :kol="kol" />
+        <KolKarti
+          v-for="(kol, i) in durum.kollar" :key="kol.id ?? i"
+          :kol="kol" :terazi="durum.terazi"
+          @sec="secilenKol = $event"
+        />
       </div>
     </section>
 
     <section>
       <h2 class="text-[10px] tracking-[0.14em] uppercase text-[var(--metin-soluk)] mb-1.5 border-l-2 border-[var(--arena)] pl-2">
-        MAKAS TABLOSU
+        KAMPANYA TABLOSU
       </h2>
-      <MakasTablosu :kollar="durum.kollar" />
+      <MakasTablosu :kollar="tumKollar" :terazi="durum.terazi" @sec="secilenKol = $event" />
     </section>
 
     <section>
@@ -57,17 +66,35 @@
       </h2>
       <OneriKuyrugu :reviewer="durum.reviewer" />
     </section>
+    </div>
+
+    <KolDetay :kol="secilenKol" @kapat="secilenKol = null" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue';
 import { useArenaDurum } from '../../composables/useArenaDurum';
+import type { Kol } from '../../composables/useArenaDurum';
 import BosSekme from '../BosSekme.vue';
 import BeslemeSagligi from './BeslemeSagligi.vue';
 import RejimInanci from './RejimInanci.vue';
 import KolKarti from './KolKarti.vue';
 import MakasTablosu from './MakasTablosu.vue';
 import OneriKuyrugu from './OneriKuyrugu.vue';
+import BootSekansi from './BootSekansi.vue';
+import GeciciKanitBandi from './GeciciKanitBandi.vue';
+import KolDetay from './KolDetay.vue';
 
 const { durum } = useArenaDurum();
+
+const secilenKol = ref<Kol | null>(null);
+
+const aktifVarlik = computed(() =>
+  durum.value.varliklar?.find(v => v.id === durum.value.aktif_varlik_id) ?? null
+);
+
+// Kampanya tablosu filo + baseline rafını birlikte gösterir (spec §3: baseline
+// lig-üstü bir raftır ama karşılaştırma için aynı terazide okunur).
+const tumKollar = computed(() => [...(durum.value.kollar ?? []), ...(durum.value.baseline_rafi ?? [])]);
 </script>

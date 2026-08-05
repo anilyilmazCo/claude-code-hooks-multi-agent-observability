@@ -30,12 +30,17 @@
      renginden degil (bkz. spec SS5.1 kural 1). */
   --lig-retail:        #E85D9E;
   --lig-yari:          #4C9AFF;
-  --lig-kurumsal:      #D9C89A;
+  /* Kurumsal-altin ile --bekleyen amber-LED (#FFB627) ayrimi (Faz B, Eren
+     talebi): asil parsomen tonu (#D9C89A) amber ile ayni sicak-turuncu aile
+     hue~40-43deg'de kumelenmisti. Muted khaki-altin'a (hue~45deg, dusuk
+     doygunluk) kaydirildi + cift-cizgi kenarlik zaten var - iki kanal birden
+     ayristirir. */
+  --lig-kurumsal:      #C2B280;
   --lig-baseline:      #8494AB;
 
   --lig-retail-dolgu:   rgba(232,  93, 158, 0.12);
   --lig-yari-dolgu:     rgba( 76, 154, 255, 0.12);
-  --lig-kurumsal-dolgu: rgba(217, 200, 154, 0.12);
+  --lig-kurumsal-dolgu: rgba(194, 178, 128, 0.12);
   --lig-baseline-dolgu: rgba(132, 148, 171, 0.12);
 }
 
@@ -75,5 +80,40 @@
 @media (prefers-reduced-motion: reduce) {
   .km-hat-akis {
     animation: none;
+  }
+}
+
+/* ARENA v2 §5.7 animasyon bütçesi: yalnız transform+opacity, layout tetikleyen
+   animasyon yok. Kol detay çekmecesi açılışı ≤180ms. */
+.km-cekmece {
+  animation: km-cekmece-ac 180ms ease-out;
+}
+
+@keyframes km-cekmece-ac {
+  from { transform: translateX(24px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* LED durum geçişi ≤150ms renk crossfade (§5.5/§5.7). */
+.km-led {
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+
+/* Boot sekansı öğeleri (§5.8) - opacity+translateY, tek geçiş. */
+.km-boot-satir {
+  animation: km-boot-belir 200ms ease-out both;
+}
+
+@keyframes km-boot-belir {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .km-cekmece,
+  .km-led,
+  .km-boot-satir {
+    animation: none;
+    transition: none;
   }
 }
