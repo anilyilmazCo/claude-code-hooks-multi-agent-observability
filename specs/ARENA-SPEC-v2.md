@@ -83,6 +83,11 @@ sonuç şu çıktı.* Bu lig panelin **kanıt vitrinidir**. Deney-1 zincirinin
 **Veri modeli karşılığı:** `kanit_vitrini: true` olan kolda `bulgu` bloğu **zorunludur**
 (Bölüm 4). Bu bloğu olmayan retail kolu panelde ölçüm sayısı gösteremez.
 
+**Yayın yolu (H6, Divan oturum-03, 2026-08-05):** Bu metin `rapor-yazari`
+turundan geçtikten sonra **yerel panelde** (Divan/ekip içi) görünebilir.
+**Kamuya açık sergileme** (topluluk erişimine açılan ARENA ekranı) ayrı ve
+**lansman kapısında** Eren onayına tabidir — Vites C, burada tekrar açılmadı.
+
 ### 1.3 YARI-RETAİL LİGİ
 
 **Ne var:** volume profile (POC / VAH / VAL), VWAP ve sapma bantları, MA/EMA aileleri,
@@ -269,11 +274,20 @@ tutma süresi dağılımına eşleştirilir) ve **MC yelpazesi olarak** yayınla
 değil. Bir kolun Sharpe'ı kendi eşleştirilmiş-rastgele yelpazesinin içinde kalıyorsa, o kolun
 kural kısmı ölçülebilir bir katkı üretmemiştir — panel bunu `YELPAZE İÇİNDE` etiketiyle söyler.
 
-**Simetri denetimi (CLAUDE.md Kural 10):** eşleştirilmiş rastgele üretiminde uygulanan her seçim
-kuralı için **kol başına düşme oranı** yayınlanır. Oranlar mertebe olarak ayrışıyorsa (ör. tedavi
-%15 vs kontrol %86) eşleştirme simetrik ilan **edilemez** ve panel karşılaştırmayı
-`SİMETRİ DENETİMİ BAŞARISIZ` şeridiyle bloklar. Bu denetim veri üreticisinde koşar; panel
-sonucunu **gösterir**, kendisi hesaplamaz.
+**Simetri denetimi (CLAUDE.md Kural 10) — eşik karara bağlandı (H4, Divan
+oturum-03, 2026-08-05, veri-kör dondurma):** eşleştirilmiş rastgele üretiminde
+uygulanan her seçim kuralı için **kol başına düşme oranı** yayınlanır.
+
+| Koşul | Sonuç |
+|---|---|
+| Fark **> 5 puan** VE oran **> 1,5×** | **BAŞARISIZ** — panel `SİMETRİ DENETİMİ BAŞARISIZ` şeridiyle karşılaştırmayı bloklar, sayı yayımlanmaz |
+| Yalnız biri (fark > 5pp VEYA oran > 1,5×) | **SARI** — sayı yayımlanır, zorunlu bulgu notuyla |
+| İkisi de eşiğin altında | Simetrik — normal yayın |
+| Paydası (kollardan birinin toplam aday sayısı) sıfır | `HESAPLANAMADI` — `BAŞARISIZ` **değil**, sıfır payda simetrik sayılmaz |
+
+Eşleştirme momentleri: **işlem sayısı + tutma süresi dağılımı (ortalama +
+varyans)**. Bu denetim veri üreticisinde koşar; panel sonucunu **gösterir**,
+kendisi hesaplamaz.
 
 ### 3.1 Zorunlu "baseline'a karşı" göstergesi
 
@@ -339,6 +353,15 @@ export interface Bulgu {
 
 **`ayrilamadi` ile `esdegerlik_kanitlandi` asla aynı rozeti almaz.** Birincisi "ölçemedik",
 ikincisi "yokluğunu gösterdik". Bu ayrımı silmek kanıt vitrinini reklam panosuna çevirir.
+
+**Karara bağlandı (H5, Divan oturum-03, 2026-08-05):** `SonucSinifi` yalnız güven
+aralığının sıfırı dışlayıp dışlamadığına bakar (TOST/eşdeğerlik marjı **yok**).
+Sonuç: **`esdegerlik_kanitlandi` v2.0'da hiçbir kolda üretilmez** — tip olarak
+tanımlı kalır (gelecekte TOST eklenirse kullanılacak) ama aktif değer kümesi
+`olculmedi` / `devam` / `ayrilamadi` / `fark_olculdu`'dur. Her kol için
+ayrım noktasının hangi `n_eff` aralığında `ayrilamadi` ↔ `fark_olculdu`'yu
+fiilen ayırt ettiği (Kural 12 kapalı-form bağlama analizi) yazılmadan o kolun
+`sonuc_sinifi`'i panelde gösterilemez.
 
 **Nokta tahmini kuralı:** `geri_cekilen_iddialar` içinde bir nokta tahmini varsa, o kolun
 kartında **hiçbir yerde** o sayı gösterilmez — kampanya tablosunda hücre boş kalır ve
@@ -643,9 +666,13 @@ Dokunma hedefleri ≥44px; yatay sayfa kaydırması yok (yalnız tablo kendi kon
 
 ### 7.1 Durum
 
-Hedef varlık kararı (forex / XAUUSD / kripto) **Vites B**'dedir ve proje sahibinin onayını
-beklemektedir (CLAUDE.md, Üç Vites tablosu: ölçüm tanımı ve örneklem seçimi metodoloji kararıdır).
-Karar verilmeden panelin herhangi bir yerine sembol veya varlık sınıfı gömülemez.
+**Karara bağlandı (H1, Divan oturum-03, 2026-08-05):** hedef varlık = **XAUUSD
+birincil**, çoklu-varlık veri modeli (§7.3) korunur. BTC verisi **geçici kanıt
+verisi** statüsünde **Faz E'ye kadar** koşmaya devam eder — aşağıdaki §7.2
+bandı ve `fark_olculdu`/`esdegerlik_kanitlandi` yasağı XAUUSD verisi devreye
+girene kadar BTC için bağlıdır. `bd fhd` bu hükümle kapandı. (Düzeltme: bu
+madde ilk yazıldığında `bd ox1`'in kaydı sanılmıştı — `ox1` *Deney-3 yön
+kararı*dır, ARENA'nın hedef varlığıyla ilgisizdir, etkilenmedi/hâlâ açık.)
 
 ### 7.2 Bugünkü BTC verisi = GEÇİCİ KANIT VERİSİ
 
@@ -735,27 +762,20 @@ Teknik ve geri alınabilir; ölçüm tanımına dokunmaz.
 9. **(Divan oturum-03'te A'ya bağlandı)** Seans filtresi aktifken `n_trials`'ın filtre-durumu
    sayısıyla çarpılması — §5.6'daki bağlanmış karara bkz., yeni ön-kayıt gerekmez.
 
-### Vites B — Eren onayı şart (metodoloji)
+### Vites B — **HÜKME BAĞLANDI (H1-H6, Divan oturum-03, 2026-08-05, Eren)**
 
-Bunlar ölçüm tanımını, kabul kapısını veya örneklem seçimini değiştirir; onaysız uygulanmaz.
 Konsolide karar ekranı: `05_strateji_lab/divan/2026-08-05-oturum-03-arena-v2-metodoloji.md`.
+Altı madde de karara bağlandı; sonuçlar spec gövdesine işlendi (satır referansı
+her maddede). Faz B icra listesi bu hükümlerin üzerine kuruludur.
 
-1. **Hedef varlık kararı** — forex / XAUUSD / kripto. Panel hazır, veri kararı bekliyor.
-   *(Zaten açık olan Vites B kaydı, `bd ox1`.)*
-2. **Lig atama kuralının dondurulması** — özellikle Donchian'ın `kurumsal`'a taşınması ve
-   sınır-durum kuralı ("makalenin tanımı mı, popüler tarif mi"). Bu bir örneklem sınıflandırma
-   kuralıdır.
-3. **Varsayılan baseline'ın `eslestirilmis_rastgele` olması** — karşılaştırmanın referans
-   noktasıdır, dolayısıyla ölçüm tanımıdır.
-4. **`eslestirilmis_rastgele` üretim şartnamesi** — eşleştirmenin hangi momentlere yapılacağı
-   (işlem sayısı + tutma süresi dağılımı) ve simetri denetiminin kabul eşiği (kol başına düşme
-   oranı ayrışma sınırı, CLAUDE.md Kural 10).
-5. **`SonucSinifi` eşikleri** — `ayrilamadi` ↔ `esdegerlik_kanitlandi` ↔ `fark_olculdu` ayrımının
-   sayısal ölçütleri ve **her eşiğin bağlama bölgesi** (Kural 12: hangi `n_eff` aralığında fiilen
-   bağladığı kapalı formda yazılmadan eşik yazılmamış sayılır).
-6. **Kanıt vitrini metinleri** — Deney-1 sonucunun panelde nasıl ifade edileceği. Hukuk dil
-   filtresinden geçmeli; "edge yok" ile "ayrılamadı" farkı korunmalı. (~~Seans filtresinin
-   `n_trials`'a etkisi~~ Divan oturum-03'te Vites A'ya bağlandı, bkz. §5.6 ve madde 9 yukarıda.)
+1. **H1 — Hedef varlık:** XAUUSD birincil + çoklu-varlık model; BTC = geçici kanıt verisi (Faz E'ye kadar). §7.1. `bd fhd` kapandı (`ox1` ayrı soru, Deney-3 yönü, etkilenmedi).
+2. **H2 — Lig atama:** tablo + tie-breaker (i) donduruldu; Donchian → kurumsal, künye zorunlu. §1.4.
+3. **H3 — Birincil baseline:** `eslestirilmis_rastgele` (i); sma/al_tut ikincil. §3.1.
+4. **H4 — Eşleştirme + simetri eşiği:** (ii) işlem sayısı+tutma süresi; fark>5pp VE oran>1,5× → BAŞARISIZ, yalnız biri → SARI. §3.
+5. **H5 — `SonucSinifi`:** (ii) yalnız GA/sıfır-dışlama; `esdegerlik_kanitlandi` v2.0'da üretilmez. §4.1.
+6. **H6 — Kanıt vitrini yayın yolu:** (ii) rapor-yazarı turu → yerel panel; kamuya açık sergileme ayrı, lansman kapısında. §1.2.
+
+*(Seans filtresinin `n_trials`'a etkisi zaten Divan oturum-03'te Vites A'ya bağlanmıştı, bkz. §5.6 ve Vites A madde 9.)*
 
 ### Vites C — her zaman Eren, istisnasız
 
@@ -771,6 +791,7 @@ tasarlanmaz, planlanmaz (CLAUDE.md Kural 1).
 ---
 
 **HÜKÜM:** ARENA v2 mimarisi üç kavram ligini tek teraziye bağlayan, `n_trials`'ı gizlenemez
-kılan ve varlık kararını bekletmeden inşa edilebilir bir sözleşme olarak tanımlanmıştır; Vites A
-kalemleri (seans-filtresi `n_trials` çarpanı dahil, Divan oturum-03) bugün uygulanabilir, Vites
-B'de kalan altı metodoloji kararı onaylanmadan hiçbir kol `fark_olculdu` hükmü taşıyamaz.
+kılan ve varlık kararını bekletmeden inşa edilebilir bir sözleşme olarak tanımlanmıştır; H1-H6
+(Divan oturum-03, 2026-08-05) ile altı metodoloji kararının hepsi hükme bağlandı ve XAUUSD
+birincil hedef, BTC Faz E'ye kadar geçici kanıt verisi — Faz B artık bu hükümlerin üzerine icra
+kurar, hiçbir metodoloji sorusu icrayı bloklamıyor.
