@@ -3,16 +3,18 @@
        Süs değil: ilk gösterilen şey sayılar değil, "hangi teraziden geçtiği". -->
   <div
     v-if="gorunur"
-    class="absolute inset-0 z-30 flex flex-col items-start justify-center gap-2 bg-[var(--zemin)] px-4 cursor-pointer"
+    class="absolute inset-0 z-30 flex flex-col items-start justify-center gap-2 px-4 cursor-pointer"
+    style="background: radial-gradient(ellipse 70% 55% at 18% 50%, rgba(138,226,52,0.08), transparent 60%), var(--zemin)"
     @click="bitir"
   >
+    <span class="absolute top-3 left-4 text-[8px] km-mono uppercase tracking-[0.2em] text-[var(--metin-soluk)]">terazi kalibrasyonu</span>
     <p class="km-mono text-xs text-[var(--metin)] km-boot-satir">ARENA · PAPER MOD · GERÇEK PARA YOK</p>
-    <div v-if="asama >= 1" class="flex flex-col gap-1">
+    <div v-if="asama >= 1" class="flex flex-col gap-1 border-l border-[var(--cizgi)] pl-3">
       <p v-for="(k, i) in kalemler" :key="k.ad" class="km-mono text-[11px] km-boot-satir" :style="{ animationDelay: (i * 110) + 'ms' }">
         <span :class="k.tamam ? 'text-[var(--akis)]' : 'text-[var(--metin-soluk)]'">{{ k.ad }} {{ k.tamam ? '✓' : '—' }}</span>
       </p>
     </div>
-    <p v-if="asama >= 2" class="km-mono text-[11px] font-bold km-boot-satir" style="color: var(--arena)">
+    <p v-if="asama >= 2" class="km-mono text-[11px] font-bold km-boot-satir" style="color: var(--arena); text-shadow: 0 0 12px rgba(138,226,52,0.45)">
       TERAZİ HAZIR{{ terazi?.harness_surumu ? ` · ${terazi.harness_surumu}` : '' }}
     </p>
   </div>

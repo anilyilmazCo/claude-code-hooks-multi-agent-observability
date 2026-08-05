@@ -59,6 +59,33 @@
   font-family: 'Cascadia Code', 'Cascadia Mono', Consolas, ui-monospace, monospace;
 }
 
+/* Faz D.2: katmanlı-siyah derinlik - üstte ince aydınlık kenar (bevel),
+   altta koyu temas gölgesi. Kart/grafik kutusu/imza kutucuklarına uygulanır;
+   düz tek-düzlem hissini kırmak için tek amaçlı bir yardımcı sınıf. */
+.km-derinlik {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035), 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Faz D.2: panel iç kutuları (grafik, imza kutucukları) için hafif katman
+   ayrımı - --panel'den bir ton açık, saf düz zemin hissini kırar. */
+.km-katman {
+  background: rgba(255, 255, 255, 0.015);
+}
+
+/* Faz D.2: kampanya tablosu satırı - sol kenarda SABİT lig rengi (--satir-lig
+   inline custom property ile satır başına set edilir), hover'da geçici olarak
+   arena rengine döner. CSS'te tutulur (inline style değil) ki :hover
+   pseudo-class inline'ın specificity'sine takılmasın. */
+.km-satir {
+  box-shadow: inset 2px 0 0 var(--satir-lig, transparent);
+  transition: background-color 150ms ease, box-shadow 150ms ease;
+}
+
+.km-satir:hover {
+  background: rgba(216, 224, 234, 0.09);
+  box-shadow: inset 2px 0 0 var(--arena);
+}
+
 .km-serit {
   scrollbar-width: thin;
 }
@@ -100,7 +127,7 @@
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  box-shadow: inset 0 0 0 1px var(--akis), 0 0 18px -2px rgba(53, 224, 216, 0.55);
+  box-shadow: inset 0 0 0 1px var(--akis), 0 0 24px -2px rgba(53, 224, 216, 0.65);
   opacity: 0;
   animation: km-parilti-bas 620ms ease-out 1;
   pointer-events: none;

@@ -1,67 +1,81 @@
 <template>
   <div
     ref="kartEl"
-    class="relative overflow-hidden flex flex-col gap-1.5 rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] px-2.5 pb-2.5 pt-3 mobile:px-2 mobile:pb-2 mobile:pt-3 cursor-pointer hover:border-[var(--metin-soluk)] transition-colors"
+    class="relative overflow-hidden flex flex-col gap-2 rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] km-derinlik pl-3.5 pr-2.5 py-2.5 mobile:pl-2 mobile:pr-2 mobile:pb-2 mobile:pt-3 cursor-pointer hover:border-[var(--metin-soluk)] transition-colors"
     :class="{ 'km-parilti': parilti, 'km-durgun': !gorunur }"
     @click="emit('sec', kol)"
   >
-    <div v-if="kol.lig" class="absolute top-0 left-0 right-0 h-[3px] rounded-t-lg pointer-events-none" :style="ligSeritStili ?? undefined"></div>
+    <!-- Faz D.2: dar sistem şeridi - masaüstünde SOL kenar (asimetrik
+         kompozisyonun "dar kolonu"), mobilde ÜST şerit (grid tek kolona
+         düşünce sol kenar anlamını yitirir). -->
+    <div
+      v-if="kol.lig"
+      class="absolute pointer-events-none left-0 top-0 bottom-0 w-[4px] rounded-l-lg mobile:w-auto mobile:right-0 mobile:bottom-auto mobile:h-[3px] mobile:rounded-l-none mobile:rounded-t-lg"
+      :style="ligSeritStili ?? undefined"
+    ></div>
 
-    <div class="flex items-center justify-between gap-2">
-      <span class="km-mono text-sm font-semibold text-[var(--metin)] truncate">{{ kol.ad ?? 'isimsiz kol' }}</span>
-      <div class="flex items-center gap-1.5 shrink-0">
-        <LigRozeti :lig="kol.lig" />
-        <ArenaRozeti :durum="kol.durum" />
+    <!-- Asimetrik gövde: geniş merkez kolonu (başlık→pipeline→grafik→karar) +
+         dar dikey imza-sayı kolonu sağda. Mobilde tek kolona çöker, imza
+         kutucukları yatay çifte döner (Faz D.1 davranışı korunur). -->
+    <div class="grid grid-cols-[1fr_96px] gap-3 mobile:grid-cols-1 mobile:gap-2">
+      <div class="flex flex-col gap-1.5 min-w-0">
+        <div class="flex items-center justify-between gap-2">
+          <span class="km-mono text-sm font-semibold text-[var(--metin)] truncate">{{ kol.ad ?? 'isimsiz kol' }}</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <LigRozeti :lig="kol.lig" />
+            <ArenaRozeti :durum="kol.durum" />
+          </div>
+        </div>
+
+        <p class="text-xs text-[var(--metin-soluk)] truncate" :title="kol.kural_ozeti ?? undefined">
+          {{ kol.kural_ozeti ?? 'kural özeti yok' }}
+        </p>
+
+        <p v-if="kol.kunye" class="text-[11px] text-[var(--metin-soluk)] truncate" :title="kunyeMetni ?? undefined">
+          künye: {{ kunyeMetni ?? 'eksik' }}
+        </p>
+        <p v-else-if="kunyeZorunluMu" class="text-[11px] text-[var(--durdu)]">
+          KÜNYE EKSİK — ÖLÇÜM GİZLENDİ
+        </p>
+
+        <p v-if="kol.donduruldu_mu" class="text-[11px] text-[var(--hakem)]">
+          {{ kol.dondurma_gerekcesi ?? 'Bu kol dondurulmuş; parametreleri değiştirilemez.' }}
+        </p>
+
+        <HatIstasyonlari :istasyonlar="kol.istasyonlar" :donduruldu="kol.donduruldu_mu" />
+
+        <MiniIsinDemeti :kol="kol" />
+
+        <div class="text-xs">
+          <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] block mb-0.5">son karar</span>
+          <p v-if="kol.son_karar?.ozet" class="text-[var(--metin)] line-clamp-2" :title="kol.son_karar.gerekce ?? undefined">
+            {{ kol.son_karar.ozet }}
+          </p>
+          <p v-else class="text-[var(--metin-soluk)]">Bu kol henüz karar üretmedi.</p>
+        </div>
       </div>
-    </div>
 
-    <p class="text-xs text-[var(--metin-soluk)] truncate" :title="kol.kural_ozeti ?? undefined">
-      {{ kol.kural_ozeti ?? 'kural özeti yok' }}
-    </p>
-
-    <p v-if="kol.kunye" class="text-[11px] text-[var(--metin-soluk)] truncate" :title="kunyeMetni ?? undefined">
-      künye: {{ kunyeMetni ?? 'eksik' }}
-    </p>
-    <p v-else-if="kunyeZorunluMu" class="text-[11px] text-[var(--durdu)]">
-      KÜNYE EKSİK — ÖLÇÜM GİZLENDİ
-    </p>
-
-    <p v-if="kol.donduruldu_mu" class="text-[11px] text-[var(--hakem)]">
-      {{ kol.dondurma_gerekcesi ?? 'Bu kol dondurulmuş; parametreleri değiştirilemez.' }}
-    </p>
-
-    <HatIstasyonlari :istasyonlar="kol.istasyonlar" :donduruldu="kol.donduruldu_mu" />
-
-    <MiniIsinDemeti :kol="kol" />
-
-    <!-- İmza sayılar (Faz D karar #3): göz sırası grafik -> bu satır -> detay.
-         Δ makas --arena (kimlik rengi, DEĞERE göre değişmez) ile enerjik;
-         DSR yargı taşıdığı için sabit --metin-parlak, eşik icat edilmez. -->
-    <div class="flex items-stretch gap-3">
-      <div class="flex-1 min-w-0">
-        <span class="block text-[9px] tracking-[0.12em] uppercase text-[var(--metin-soluk)]">Δ makas</span>
-        <span class="km-mono text-[20px] font-bold" style="font-variant-numeric: tabular-nums; color: var(--arena); text-shadow: 0 0 12px rgba(138,226,52,0.35)">{{ makasMetni }}</span>
+      <!-- İmza sayılar (Faz D karar #3, D.2'de kutucuk): Δ makas --arena
+           (kimlik rengi, DEĞERE göre değişmez) ile enerjik; DSR yargı
+           taşıdığı için sabit --metin-parlak, eşik icat edilmez. -->
+      <div class="flex flex-col gap-2 h-full mobile:flex-row mobile:h-auto">
+        <div class="rounded border border-[var(--cizgi)] km-katman km-derinlik px-2 py-1.5 flex-1 flex flex-col justify-center min-w-0">
+          <span class="block text-[8px] tracking-[0.14em] uppercase text-[var(--metin-soluk)]">Δ makas</span>
+          <span class="km-mono text-[16px] font-bold leading-tight whitespace-nowrap" style="font-variant-numeric: tabular-nums; color: var(--arena); text-shadow: 0 0 14px rgba(138,226,52,0.4)">{{ makasMetni }}</span>
+        </div>
+        <div class="rounded border border-[var(--cizgi)] km-katman km-derinlik px-2 py-1.5 flex-1 flex flex-col justify-center min-w-0">
+          <span class="block text-[8px] tracking-[0.14em] uppercase text-[var(--metin-soluk)]">DSR</span>
+          <span v-if="dsrDeger !== null && terazi?.n_trials != null" class="km-mono text-[16px] font-bold leading-tight" style="font-variant-numeric: tabular-nums; color: var(--metin-parlak)">{{ dsrDeger.toFixed(2) }}</span>
+          <span v-else class="text-[10px] text-[var(--metin-soluk)] leading-tight">n_trials YOK</span>
+        </div>
       </div>
-      <div class="flex-1 min-w-0">
-        <span class="block text-[9px] tracking-[0.12em] uppercase text-[var(--metin-soluk)]">DSR</span>
-        <span v-if="dsrDeger !== null && terazi?.n_trials != null" class="km-mono text-[20px] font-bold" style="font-variant-numeric: tabular-nums; color: var(--metin-parlak)">{{ dsrDeger.toFixed(2) }}</span>
-        <span v-else class="text-[11px] text-[var(--metin-soluk)]">DSR — n_trials YOK</span>
-      </div>
-    </div>
-
-    <div class="text-xs">
-      <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] block mb-0.5">son karar</span>
-      <p v-if="kol.son_karar?.ozet" class="text-[var(--metin)] line-clamp-2" :title="kol.son_karar.gerekce ?? undefined">
-        {{ kol.son_karar.ozet }}
-      </p>
-      <p v-else class="text-[var(--metin-soluk)]">Bu kol henüz karar üretmedi.</p>
     </div>
 
     <DsrRozeti :deger="dsrDeger" :n-trials="terazi?.n_trials ?? null" />
     <WfSerit :pencereler="kol.walk_forward" />
     <McGosterge :mc="kol.mc" />
 
-    <div class="border-t border-[var(--cizgi)] pt-2.5">
+    <div class="rounded-md border border-[var(--cizgi)] km-katman km-derinlik p-2.5 mobile:p-2">
       <CiftDefterSeridi v-if="kol.defterler" :defterler="kol.defterler" />
       <p v-else class="text-[11px] text-[var(--metin-soluk)]">Bu kol için defter açılmadı.</p>
       <BaselineKarsilastirmaSatiri :bk="kol.baseline_karsilastirma" />

@@ -24,17 +24,18 @@
       <tbody :style="satirlar.length > 200 ? { contentVisibility: 'auto', containIntrinsicSize: '0 24px' } : {}">
         <tr
           v-for="s in satirlar" :key="s.id"
-          class="border-b border-[var(--cizgi)] cursor-pointer hover:bg-[rgba(216,224,234,0.09)] hover:shadow-[inset_2px_0_0_var(--arena)] transition-colors"
+          class="km-satir border-b border-[var(--cizgi)] cursor-pointer"
           style="height: 24px"
+          :style="ligKenarStili(s.kol.lig)"
           @click="emit('sec', s.kol)"
         >
           <td class="pr-1.5 text-[var(--metin)] truncate max-w-[10rem]">{{ s.ad }}</td>
-          <td class="pr-1.5"><LigRozeti :lig="s.kol.lig" /></td>
+          <td class="pr-1.5 border-r border-[rgba(28,38,53,0.6)]"><LigRozeti :lig="s.kol.lig" /></td>
           <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ s.trades }}</td>
           <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums" :class="isaretRengi(s.return)">{{ fmtYuzde(s.return) }}</td>
           <td class="pr-1.5 text-right text-[var(--durdu)]" style="font-variant-numeric: tabular-nums">{{ fmtYuzde(s.maxdd) }}</td>
           <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.pf) }}</td>
-          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.sharpe) }}</td>
+          <td class="pr-1.5 text-right text-[var(--metin)] border-r border-[rgba(28,38,53,0.6)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.sharpe) }}</td>
           <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums">
             <span
               class="px-1 rounded border"
@@ -54,8 +55,17 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import type { Kol, TeraziKunyesi } from '../../composables/useArenaDurum';
+import type { Kol, Lig, TeraziKunyesi } from '../../composables/useArenaDurum';
 import LigRozeti from './LigRozeti.vue';
+
+// Faz D.2 mikro-doku: satır sol kenarında sabit-şiddette lig rengi (kart
+// şeridiyle aynı ilke - kimlik, duruma göre değişmez, spec §5.1).
+const LIG_RENK_ADI: Record<Lig, string> = { retail: 'retail', yari_retail: 'yari', kurumsal: 'kurumsal', baseline: 'baseline' };
+function ligKenarStili(lig: Lig | null): Record<string, string> {
+  if (!lig) return {};
+  const ad = LIG_RENK_ADI[lig];
+  return { '--satir-lig': `var(--lig-${ad})` };
+}
 
 const props = defineProps<{ kollar: Kol[] | null; terazi?: TeraziKunyesi | null }>();
 const emit = defineEmits<{ sec: [kol: Kol] }>();
