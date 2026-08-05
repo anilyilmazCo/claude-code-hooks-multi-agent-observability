@@ -278,16 +278,33 @@ kural kısmı ölçülebilir bir katkı üretmemiştir — panel bunu `YELPAZE �
 oturum-03, 2026-08-05, veri-kör dondurma):** eşleştirilmiş rastgele üretiminde
 uygulanan her seçim kuralı için **kol başına düşme oranı** yayınlanır.
 
+**Simetri tabanı (H4 eki, Divan oturum-03, Faz B.6, 2026-08-05):** hüküm
+**taban altında verilmez.** Tedavi VEYA kontrol tarafında `< 30` işlem varsa
+sonuç `YETERSİZ` — gri, sayı yayımlanmaz, `BAŞARISIZ` **denmez**. Taban bir
+küçük-örneklem gürültü önlemidir, asimetri hükmü değildir; iki kavram
+panelde **asla aynı rozetle** gösterilmez.
+
 | Koşul | Sonuç |
 |---|---|
-| Fark **> 5 puan** VE oran **> 1,5×** | **BAŞARISIZ** — panel `SİMETRİ DENETİMİ BAŞARISIZ` şeridiyle karşılaştırmayı bloklar, sayı yayımlanmaz |
-| Yalnız biri (fark > 5pp VEYA oran > 1,5×) | **SARI** — sayı yayımlanır, zorunlu bulgu notuyla |
-| İkisi de eşiğin altında | Simetrik — normal yayın |
+| Tedavi VEYA kontrol `< 30` işlem | `YETERSİZ` — gri, sayı yayımlanmaz, "devam" |
+| (taban geçildi) Fark **> 5 puan** VE oran **> 1,5×** | **BAŞARISIZ** — panel `SİMETRİ DENETİMİ BAŞARISIZ` şeridiyle karşılaştırmayı bloklar, sayı yayımlanmaz |
+| (taban geçildi) Yalnız biri (fark > 5pp VEYA oran > 1,5×) | **SARI** — sayı yayımlanır, zorunlu bulgu notuyla |
+| (taban geçildi) İkisi de eşiğin altında | Simetrik — normal yayın |
 | Paydası (kollardan birinin toplam aday sayısı) sıfır | `HESAPLANAMADI` — `BAŞARISIZ` **değil**, sıfır payda simetrik sayılmaz |
 
 Eşleştirme momentleri: **işlem sayısı + tutma süresi dağılımı (ortalama +
 varyans)**. Bu denetim veri üreticisinde koşar; panel sonucunu **gösterir**,
 kendisi hesaplamaz.
+
+**Açık bulgu (Faz B.6, kapatılmadı — ayrı karar ekranına taşındı):** taban
+uygulandıktan ve gerçek 1000-bar BTC verisiyle koşulduktan sonra bile
+`sma-kesisim` kolu (33 tedavi / kontrol tabanın üstünde) `BAŞARISIZ` dönmeye
+devam ediyor (fark ~93pp, oran ~30×) — küçük-örneklem gürültüsü değil,
+yapısal bir tanım uyumsuzluğu olabilir: tedavi düşme oranı "aynı yönde
+tekrarlanan sinyal" ölçer, kontrol düşme oranı "rastgele girişin veri sonunu
+aşması" ölçer; ikisi aynı büyüklüğü ölçmeyebilir. Eşik/tanım **değiştirilmedi**
+(veri görüldükten sonra değişiklik Kural 9 ihlali olur) — karar ekranı:
+`05_strateji_lab/divan/2026-08-05-oturum-03-arena-v2-metodoloji.md` §4 eki.
 
 ### 3.1 Zorunlu "baseline'a karşı" göstergesi
 

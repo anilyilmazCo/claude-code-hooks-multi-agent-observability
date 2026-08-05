@@ -177,7 +177,9 @@ export interface MonteCarloOzeti {
 }
 
 // H4: simetri denetimi - fark>5pp VE oran>1.5x -> basarisiz, tek biri -> sari
-export type SimetriSonucu = 'simetrik' | 'sari' | 'basarisiz' | 'hesaplanamadi';
+// 'yetersiz': H4 eki (Faz B.6) - her iki tarafta >=30 işlem birikmeden
+// hüküm verilmez (gri, sayı yayımlanmaz, BAŞARISIZ denmez).
+export type SimetriSonucu = 'simetrik' | 'sari' | 'basarisiz' | 'hesaplanamadi' | 'yetersiz';
 
 export interface BaselineKarsilastirma {
   baseline_id: string | null;
