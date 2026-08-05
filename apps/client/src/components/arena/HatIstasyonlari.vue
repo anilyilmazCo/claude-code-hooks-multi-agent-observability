@@ -7,7 +7,11 @@
           :class="istasyonSinifi(bul(ad)?.durum ?? null).kutu"
           :title="bul(ad)?.not ?? undefined"
         >
-          <span class="w-2 h-2 rounded-full km-led" :class="istasyonSinifi(bul(ad)?.durum ?? null).nokta"></span>
+          <span
+            class="w-2 h-2 rounded-full km-led"
+            :class="istasyonSinifi(bul(ad)?.durum ?? null).nokta"
+            :style="istasyonGlow(bul(ad)?.durum ?? null)"
+          ></span>
         </div>
         <span class="text-[9px] mobile:text-[8px] tracking-[0.12em] uppercase text-[var(--metin-soluk)]">{{ ETIKET[ad] }}</span>
       </div>
@@ -44,6 +48,18 @@ function baglayiciAkiyorMu(i: number): boolean {
   if (props.donduruldu) return false;
   const sonraki = bul(SIRA[i + 1]);
   return sonraki?.durum === 'akiyor';
+}
+
+// Faz D karar #5: LED canlılığı animasyonSUZ - sabit statik glow, döngüsel
+// animasyon bütçesine hiçbir maliyet eklemez (§5.7 kart başına 2 tavanı).
+function istasyonGlow(durum: IstasyonDurum | null): Record<string, string> {
+  switch (durum) {
+    case 'akiyor': return { boxShadow: '0 0 6px 1px var(--akis)' };
+    case 'bekliyor': case 'bayat': return { boxShadow: '0 0 6px 1px var(--bekleyen)' };
+    case 'hata': return { boxShadow: '0 0 6px 1px var(--durdu)' };
+    case 'karantina': return { boxShadow: '0 0 6px 1px var(--hakem)' };
+    default: return {};
+  }
 }
 
 function istasyonSinifi(durum: IstasyonDurum | null): { kutu: string; nokta: string } {

@@ -1,8 +1,12 @@
 <template>
   <div
-    class="flex flex-col gap-2.5 rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] p-3.5 mobile:p-3 cursor-pointer hover:border-[var(--metin-soluk)] transition-colors"
+    ref="kartEl"
+    class="relative overflow-hidden flex flex-col gap-1.5 rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] px-2.5 pb-2.5 pt-3 mobile:px-2 mobile:pb-2 mobile:pt-3 cursor-pointer hover:border-[var(--metin-soluk)] transition-colors"
+    :class="{ 'km-parilti': parilti, 'km-durgun': !gorunur }"
     @click="emit('sec', kol)"
   >
+    <div v-if="kol.lig" class="absolute top-0 left-0 right-0 h-[3px] rounded-t-lg pointer-events-none" :style="ligSeritStili ?? undefined"></div>
+
     <div class="flex items-center justify-between gap-2">
       <span class="km-mono text-sm font-semibold text-[var(--metin)] truncate">{{ kol.ad ?? 'isimsiz kol' }}</span>
       <div class="flex items-center gap-1.5 shrink-0">
@@ -28,6 +32,23 @@
 
     <HatIstasyonlari :istasyonlar="kol.istasyonlar" :donduruldu="kol.donduruldu_mu" />
 
+    <MiniIsinDemeti :kol="kol" />
+
+    <!-- İmza sayılar (Faz D karar #3): göz sırası grafik -> bu satır -> detay.
+         Δ makas --arena (kimlik rengi, DEĞERE göre değişmez) ile enerjik;
+         DSR yargı taşıdığı için sabit --metin-parlak, eşik icat edilmez. -->
+    <div class="flex items-stretch gap-3">
+      <div class="flex-1 min-w-0">
+        <span class="block text-[9px] tracking-[0.12em] uppercase text-[var(--metin-soluk)]">Δ makas</span>
+        <span class="km-mono text-[20px] font-bold" style="font-variant-numeric: tabular-nums; color: var(--arena); text-shadow: 0 0 12px rgba(138,226,52,0.35)">{{ makasMetni }}</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <span class="block text-[9px] tracking-[0.12em] uppercase text-[var(--metin-soluk)]">DSR</span>
+        <span v-if="dsrDeger !== null && terazi?.n_trials != null" class="km-mono text-[20px] font-bold" style="font-variant-numeric: tabular-nums; color: var(--metin-parlak)">{{ dsrDeger.toFixed(2) }}</span>
+        <span v-else class="text-[11px] text-[var(--metin-soluk)]">DSR — n_trials YOK</span>
+      </div>
+    </div>
+
     <div class="text-xs">
       <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] block mb-0.5">son karar</span>
       <p v-if="kol.son_karar?.ozet" class="text-[var(--metin)] line-clamp-2" :title="kol.son_karar.gerekce ?? undefined">
@@ -36,7 +57,7 @@
       <p v-else class="text-[var(--metin-soluk)]">Bu kol henüz karar üretmedi.</p>
     </div>
 
-    <DsrRozeti :deger="kol.defterler?.gercek_maliyet?.deflated_sharpe ?? null" :n-trials="terazi?.n_trials ?? null" />
+    <DsrRozeti :deger="dsrDeger" :n-trials="terazi?.n_trials ?? null" />
     <WfSerit :pencereler="kol.walk_forward" />
     <McGosterge :mc="kol.mc" />
 
@@ -62,10 +83,11 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import type { Kol, TeraziKunyesi } from '../../composables/useArenaDurum';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import type { Kol, Lig, TeraziKunyesi } from '../../composables/useArenaDurum';
 import ArenaRozeti from './ArenaRozeti.vue';
 import HatIstasyonlari from './HatIstasyonlari.vue';
+import MiniIsinDemeti from './MiniIsinDemeti.vue';
 import CiftDefterSeridi from './CiftDefterSeridi.vue';
 import LigRozeti from './LigRozeti.vue';
 import DsrRozeti from './DsrRozeti.vue';
@@ -75,6 +97,60 @@ import BaselineKarsilastirmaSatiri from './BaselineKarsilastirmaSatiri.vue';
 
 const props = defineProps<{ kol: Kol; terazi?: TeraziKunyesi | null }>();
 const emit = defineEmits<{ sec: [kol: Kol] }>();
+
+const dsrDeger = computed(() => props.kol.defterler?.gercek_maliyet?.deflated_sharpe ?? null);
+
+const makasMetni = computed(() => {
+  const g = props.kol.defterler?.gercek_maliyet?.net_getiri_yuzde;
+  const s = props.kol.defterler?.surtunmesiz?.net_getiri_yuzde;
+  if (g == null || s == null) return 'veri yok';
+  const makas = s - g;
+  const isaret = makas > 0 ? '+' : '';
+  return `${isaret}${makas.toFixed(2)}pp`;
+});
+
+// Lig kimlik rengi kart üst şeridinde - şiddet SABİT, kol.durum'a göre
+// değişmez (Faz D karar #4: değişseydi lig rengi durum taşımaya başlardı).
+const LIG_RENK_ADI: Record<Lig, string> = { retail: 'retail', yari_retail: 'yari', kurumsal: 'kurumsal', baseline: 'baseline' };
+const ligSeritStili = computed(() => {
+  if (!props.kol.lig) return null;
+  const ad = LIG_RENK_ADI[props.kol.lig];
+  return {
+    background: `var(--lig-${ad})`,
+    boxShadow: `0 0 10px 0 var(--lig-${ad}-parilti), 0 1px 6px -2px var(--lig-${ad}-parilti)`
+  };
+});
+
+// Faz D karar #7/#9: ekran dışı kartta animasyon duraklatılır (bütçe), veri
+// gerçekten güncellenince (kol.guncellendi damgası değişince) TEK SEFERLİK
+// kenar parıltısı - sahte/döngüsel animasyon değil.
+const kartEl = ref<HTMLElement | null>(null);
+const gorunur = ref(true);
+const parilti = ref(false);
+let gozlemci: IntersectionObserver | null = null;
+let parlamaZamanlayici: ReturnType<typeof setTimeout> | null = null;
+
+onMounted(() => {
+  if (kartEl.value && 'IntersectionObserver' in window) {
+    gozlemci = new IntersectionObserver(
+      (girisler) => { for (const g of girisler) gorunur.value = g.isIntersecting; },
+      { rootMargin: '200px' }
+    );
+    gozlemci.observe(kartEl.value);
+  }
+});
+onUnmounted(() => {
+  gozlemci?.disconnect();
+  if (parlamaZamanlayici) clearTimeout(parlamaZamanlayici);
+});
+
+watch(() => props.kol.guncellendi, (yeni, eski) => {
+  if (!eski || !yeni || yeni === eski || !gorunur.value) return;
+  parilti.value = false;
+  requestAnimationFrame(() => { parilti.value = true; });
+  if (parlamaZamanlayici) clearTimeout(parlamaZamanlayici);
+  parlamaZamanlayici = setTimeout(() => { parilti.value = false; }, 640);
+});
 
 // H2: kurumsal + retail(kanit_vitrini) + baseline kolunda künye zorunlu
 // (spec §4 tablosu); yari_retail'de opsiyonel.

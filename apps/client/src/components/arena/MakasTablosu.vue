@@ -1,49 +1,49 @@
 <template>
-  <div class="rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] p-3.5 mobile:p-3 overflow-x-auto">
+  <div class="rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] p-2 mobile:p-1.5 overflow-x-auto">
     <table v-if="satirlar.length > 0" class="w-full text-[11px] km-mono min-w-[52rem]">
       <thead>
-        <tr class="text-[9px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] text-left border-b border-[var(--cizgi)]">
-          <th class="py-1.5 pr-2 font-normal">kol</th>
-          <th class="py-1.5 pr-2 font-normal">lig</th>
-          <th class="py-1.5 pr-2 font-normal text-right">trades</th>
-          <th class="py-1.5 pr-2 font-normal text-right">return</th>
-          <th class="py-1.5 pr-2 font-normal text-right">maxdd</th>
-          <th class="py-1.5 pr-2 font-normal text-right">pf</th>
-          <th class="py-1.5 pr-2 font-normal text-right">sharpe</th>
-          <th class="py-1.5 pr-2 font-normal text-right">dsr</th>
-          <th class="py-1.5 pr-2 font-normal text-right">n</th>
-          <th class="py-1.5 pr-2 font-normal text-right">persistence</th>
-          <th class="py-1.5 pr-2 font-normal text-right">Δ baseline</th>
-          <th class="py-1.5 font-normal text-right">makas</th>
+        <tr class="text-[9px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] text-left border-b border-[var(--cizgi)] sticky top-0 bg-[var(--panel)] z-10">
+          <th class="py-1 pr-1.5 font-normal">kol</th>
+          <th class="py-1 pr-1.5 font-normal">lig</th>
+          <th class="py-1 pr-1.5 font-normal text-right">trades</th>
+          <th class="py-1 pr-1.5 font-normal text-right">return</th>
+          <th class="py-1 pr-1.5 font-normal text-right">maxdd</th>
+          <th class="py-1 pr-1.5 font-normal text-right">pf</th>
+          <th class="py-1 pr-1.5 font-normal text-right">sharpe</th>
+          <th class="py-1 pr-1.5 font-normal text-right">dsr</th>
+          <th class="py-1 pr-1.5 font-normal text-right">n</th>
+          <th class="py-1 pr-1.5 font-normal text-right">persistence</th>
+          <th class="py-1 pr-1.5 font-normal text-right">Δ baseline</th>
+          <th class="py-1 font-normal text-right">makas</th>
         </tr>
       </thead>
       <!-- >200 satır: content-visibility ile boya maliyeti kısılır (spec §6.3
            kapısı). >1000 VE ölçülmüş >16ms olursa kütüphanesiz pencereleme
            gerekir — bu depoda henüz o ölçek yok, o yüzden yazılmadı
            (ponytail: skipped, add when row count crosses 1000). -->
-      <tbody :style="satirlar.length > 200 ? { contentVisibility: 'auto', containIntrinsicSize: '0 28px' } : {}">
+      <tbody :style="satirlar.length > 200 ? { contentVisibility: 'auto', containIntrinsicSize: '0 24px' } : {}">
         <tr
           v-for="s in satirlar" :key="s.id"
-          class="border-b border-[var(--cizgi)] cursor-pointer hover:bg-[rgba(216,224,234,0.04)]"
-          style="height: 28px"
+          class="border-b border-[var(--cizgi)] cursor-pointer hover:bg-[rgba(216,224,234,0.09)] hover:shadow-[inset_2px_0_0_var(--arena)] transition-colors"
+          style="height: 24px"
           @click="emit('sec', s.kol)"
         >
-          <td class="pr-2 text-[var(--metin)] truncate max-w-[10rem]">{{ s.ad }}</td>
-          <td class="pr-2"><LigRozeti :lig="s.kol.lig" /></td>
-          <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ s.trades }}</td>
-          <td class="pr-2 text-right" style="font-variant-numeric: tabular-nums" :class="isaretRengi(s.return)">{{ fmtYuzde(s.return) }}</td>
-          <td class="pr-2 text-right text-[var(--durdu)]" style="font-variant-numeric: tabular-nums">{{ fmtYuzde(s.maxdd) }}</td>
-          <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.pf) }}</td>
-          <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.sharpe) }}</td>
-          <td class="pr-2 text-right" style="font-variant-numeric: tabular-nums">
+          <td class="pr-1.5 text-[var(--metin)] truncate max-w-[10rem]">{{ s.ad }}</td>
+          <td class="pr-1.5"><LigRozeti :lig="s.kol.lig" /></td>
+          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ s.trades }}</td>
+          <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums" :class="isaretRengi(s.return)">{{ fmtYuzde(s.return) }}</td>
+          <td class="pr-1.5 text-right text-[var(--durdu)]" style="font-variant-numeric: tabular-nums">{{ fmtYuzde(s.maxdd) }}</td>
+          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.pf) }}</td>
+          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.sharpe) }}</td>
+          <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums">
             <span
               class="px-1 rounded border"
               :class="(nTrials === null || s.dsr === null) ? 'border-dashed border-[var(--metin-soluk)] text-[var(--metin-soluk)]' : 'border-transparent text-[var(--metin)]'"
             >{{ (nTrials === null || s.dsr === null) ? 'DSR YOK' : fmtSayi(s.dsr) }}</span>
           </td>
-          <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ nTrials ?? '—' }}</td>
-          <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtOran(s.persistence) }}</td>
-          <td class="pr-2 text-right" style="font-variant-numeric: tabular-nums" :class="deltaBaselineRengi(s)">{{ deltaBaselineMetni(s) }}</td>
+          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ nTrials ?? '—' }}</td>
+          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtOran(s.persistence) }}</td>
+          <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums" :class="deltaBaselineRengi(s)">{{ deltaBaselineMetni(s) }}</td>
           <td class="text-right font-bold text-[var(--arena)]" style="font-variant-numeric: tabular-nums">{{ s.makas === null ? 'veri yok' : fmtPuan(s.makas) }}</td>
         </tr>
       </tbody>

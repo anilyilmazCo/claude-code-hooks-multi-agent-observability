@@ -4,7 +4,7 @@
          içerik altta zaten render olur, sekans yalnız görsel olarak örter. -->
     <BootSekansi :terazi="durum.terazi" />
     <GeciciKanitBandi :aktif-varlik="aktifVarlik" />
-    <div class="flex-1 overflow-y-auto px-5 py-4 mobile:px-3 mobile:py-3 space-y-4">
+    <div class="flex-1 overflow-y-auto px-3 py-3 mobile:px-2 mobile:py-2 space-y-3">
     <!-- Kunye + hukuk satiri -->
     <div>
       <div class="flex items-baseline justify-between gap-2 flex-wrap">
@@ -44,7 +44,7 @@
         v-if="!durum.kollar || durum.kollar.length === 0"
         mesaj="Arena filosu henüz kurulmadı — kollar bağlandığında her biri burada kendi üretim hattıyla görünecek."
       />
-      <div v-else class="grid gap-3 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+      <div v-else class="grid gap-2 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <KolKarti
           v-for="(kol, i) in durum.kollar" :key="kol.id ?? i"
           :kol="kol" :terazi="durum.terazi"

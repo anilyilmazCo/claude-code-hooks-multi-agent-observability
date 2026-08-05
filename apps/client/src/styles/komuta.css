@@ -4,11 +4,15 @@
    degistirmeye devam eder; bu dosya sadece yeni dis kabugu (ust serit,
    sekmeler, self-healing rozeti) icin sabit koyu-zemin + neon paletidir. */
 :root {
-  --zemin: #080B12;
+  --zemin: #05070B;
   --panel: #0E141F;
   --cizgi: #1C2635;
   --metin: #D8E0EA;
   --metin-soluk: #6E7C90;
+  /* Faz D: yargı taşımayan sabit "enerjik" beyaz - imza sayılar (DSR) için.
+     DSR N ile aynı renkte basılır her N'de; büyüklük/ağırlıktan gelir, hue'dan
+     değil (§2.3: değere bağlı renk = gömülü eşik, EsikKaydi olmadan yasak). */
+  --metin-parlak: #F2F6FB;
   --akis: #35E0D8;
   --bekleyen: #FFB627;
   --durdu: #FF4D5A;
@@ -42,6 +46,13 @@
   --lig-yari-dolgu:     rgba( 76, 154, 255, 0.12);
   --lig-kurumsal-dolgu: rgba(194, 178, 128, 0.12);
   --lig-baseline-dolgu: rgba(132, 148, 171, 0.12);
+
+  /* Faz D: kart üstü lig şeridi parıltısı - şiddeti SABİT, duruma göre değişmez
+     (değişseydi lig rengi durum taşımaya başlardı, spec §5.1 ihlali). */
+  --lig-retail-parilti:   rgba(232,  93, 158, 0.45);
+  --lig-yari-parilti:     rgba( 76, 154, 255, 0.45);
+  --lig-kurumsal-parilti: rgba(194, 178, 128, 0.45);
+  --lig-baseline-parilti: rgba(132, 148, 171, 0.45);
 }
 
 .km-mono {
@@ -52,18 +63,66 @@
   scrollbar-width: thin;
 }
 
+/* box-shadow animasyonu compositor-dışıydı (§5.7 "sadece transform/opacity"
+   ihlali) - ::after katmanına taşındı, opacity+transform ile aynı nabız hissi. */
 .km-rozet--silahli {
+  position: relative;
+}
+
+.km-rozet--silahli::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 9999px;
+  box-shadow: 0 0 12px 3px rgba(53, 224, 216, 0.5);
+  opacity: 0.2;
   animation: km-nabiz 2s ease-in-out infinite;
+  pointer-events: none;
 }
 
 @keyframes km-nabiz {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(53, 224, 216, 0.35); }
-  50% { box-shadow: 0 0 14px 4px rgba(53, 224, 216, 0.35); }
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.06); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .km-rozet--silahli {
+  .km-rozet--silahli::after {
     animation: none;
+    opacity: 0.2;
+  }
+}
+
+/* Faz D: canlı veri güncellenince kart kenarında TEK SEFERLİK parıltı (döngüsel
+   değil, bütçeye sayılmaz). kol.guncellendi damgası gerçekten değiştiğinde
+   tetiklenir - sahte/dekoratif animasyon değil. */
+.km-parilti::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px var(--akis), 0 0 18px -2px rgba(53, 224, 216, 0.55);
+  opacity: 0;
+  animation: km-parilti-bas 620ms ease-out 1;
+  pointer-events: none;
+}
+
+@keyframes km-parilti-bas {
+  0% { opacity: 0; }
+  18% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Faz D: ekran dışı kartlarda döngüsel animasyonlar duraklatılır - eşzamanlı
+   instance sayısını kısar (§5.7 bütçesi), IntersectionObserver ile tetiklenir. */
+.km-durgun,
+.km-durgun * {
+  animation-play-state: paused !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .km-parilti::before {
+    animation: none;
+    opacity: 0;
   }
 }
 

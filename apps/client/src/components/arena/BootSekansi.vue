@@ -8,10 +8,13 @@
   >
     <p class="km-mono text-xs text-[var(--metin)] km-boot-satir">ARENA · PAPER MOD · GERÇEK PARA YOK</p>
     <div v-if="asama >= 1" class="flex flex-col gap-1">
-      <p v-for="(k, i) in kalemler" :key="k.ad" class="km-mono text-[11px] km-boot-satir" :style="{ animationDelay: (i * 60) + 'ms' }">
+      <p v-for="(k, i) in kalemler" :key="k.ad" class="km-mono text-[11px] km-boot-satir" :style="{ animationDelay: (i * 110) + 'ms' }">
         <span :class="k.tamam ? 'text-[var(--akis)]' : 'text-[var(--metin-soluk)]'">{{ k.ad }} {{ k.tamam ? '✓' : '—' }}</span>
       </p>
     </div>
+    <p v-if="asama >= 2" class="km-mono text-[11px] font-bold km-boot-satir" style="color: var(--arena)">
+      TERAZİ HAZIR{{ terazi?.harness_surumu ? ` · ${terazi.harness_surumu}` : '' }}
+    </p>
   </div>
 </template>
 
@@ -48,6 +51,7 @@ onMounted(() => {
   }
   gorunur.value = true;
   window.setTimeout(() => { asama.value = 1; }, 200);
-  window.setTimeout(bitir, 900);
+  window.setTimeout(() => { asama.value = 2; }, 900);
+  window.setTimeout(bitir, 1400);
 });
 </script>
