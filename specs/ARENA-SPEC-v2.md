@@ -516,6 +516,11 @@ v0 sözlüğü korunur ve genişletilir:
   terazi şeridi `SEANS FİLTRESİ AKTİF — n_eff düştü` uyarısı gösterir ve DSR rozetleri
   filtrelenmiş `n_trials` ile yeniden okunur. Filtreli sayıyı filtresiz `n_trials` ile göstermek
   çoklu-deneme düzeltmesini bozar.
+  **Karar bağlandı (Divan oturum-03, Vites A — yeni eşik değil, mevcut `Z8`/
+  `metrikler.py` doktrininin zorunlu sonucu):** `n_trials`, filtre-öncesi değere
+  kullanıcıya açık filtre-durumu sayısı kadar **çarpan** olarak yazılır (ör.
+  Tokyo/Londra/NY/Tümü = 4 durum → ×4). Filtreli görünüm filtre-öncesi
+  `n_trials` ile okunamaz; bkz. `05_strateji_lab/divan/2026-08-05-oturum-03-arena-v2-metodoloji.md` §0.
 - Varlık sınıfı seans kavramını taşımıyorsa (7/24 piyasa), filtre **görünmez** — boş toggle
   göstermek yerine bölüm hiç render edilmez (Bölüm 7).
 
@@ -727,13 +732,16 @@ Teknik ve geri alınabilir; ölçüm tanımına dokunmaz.
 6. Boot sekansı, `prefers-reduced-motion` genişletmesi, mobil bozulma sırası.
 7. `HatIstasyonlari.vue` durum sözlüğüne `bayat` + `karantina` eklenmesi.
 8. Geçici-kanıt-verisi bandı ve varlık-bağımsızlık denetimi (sembol sabiti taraması).
+9. **(Divan oturum-03'te A'ya bağlandı)** Seans filtresi aktifken `n_trials`'ın filtre-durumu
+   sayısıyla çarpılması — §5.6'daki bağlanmış karara bkz., yeni ön-kayıt gerekmez.
 
 ### Vites B — Eren onayı şart (metodoloji)
 
 Bunlar ölçüm tanımını, kabul kapısını veya örneklem seçimini değiştirir; onaysız uygulanmaz.
+Konsolide karar ekranı: `05_strateji_lab/divan/2026-08-05-oturum-03-arena-v2-metodoloji.md`.
 
 1. **Hedef varlık kararı** — forex / XAUUSD / kripto. Panel hazır, veri kararı bekliyor.
-   *(Zaten açık olan Vites B kaydı.)*
+   *(Zaten açık olan Vites B kaydı, `bd ox1`.)*
 2. **Lig atama kuralının dondurulması** — özellikle Donchian'ın `kurumsal`'a taşınması ve
    sınır-durum kuralı ("makalenin tanımı mı, popüler tarif mi"). Bu bir örneklem sınıflandırma
    kuralıdır.
@@ -745,10 +753,9 @@ Bunlar ölçüm tanımını, kabul kapısını veya örneklem seçimini değişt
 5. **`SonucSinifi` eşikleri** — `ayrilamadi` ↔ `esdegerlik_kanitlandi` ↔ `fark_olculdu` ayrımının
    sayısal ölçütleri ve **her eşiğin bağlama bölgesi** (Kural 12: hangi `n_eff` aralığında fiilen
    bağladığı kapalı formda yazılmadan eşik yazılmamış sayılır).
-6. **Seans filtresinin `n_trials`'a etkisi** — filtreli koşuların çoklu-deneme sayımına nasıl
-   gireceği. Yanlış sayılırsa deflated Sharpe susar.
-7. **Kanıt vitrini metinleri** — Deney-1 sonucunun panelde nasıl ifade edileceği. Hukuk dil
-   filtresinden geçmeli; "edge yok" ile "ayrılamadı" farkı korunmalı.
+6. **Kanıt vitrini metinleri** — Deney-1 sonucunun panelde nasıl ifade edileceği. Hukuk dil
+   filtresinden geçmeli; "edge yok" ile "ayrılamadı" farkı korunmalı. (~~Seans filtresinin
+   `n_trials`'a etkisi~~ Divan oturum-03'te Vites A'ya bağlandı, bkz. §5.6 ve madde 9 yukarıda.)
 
 ### Vites C — her zaman Eren, istisnasız
 
@@ -765,5 +772,5 @@ tasarlanmaz, planlanmaz (CLAUDE.md Kural 1).
 
 **HÜKÜM:** ARENA v2 mimarisi üç kavram ligini tek teraziye bağlayan, `n_trials`'ı gizlenemez
 kılan ve varlık kararını bekletmeden inşa edilebilir bir sözleşme olarak tanımlanmıştır; Vites A
-kalemleri bugün uygulanabilir, Vites B'deki yedi metodoloji kararı onaylanmadan hiçbir kol
-`fark_olculdu` hükmü taşıyamaz.
+kalemleri (seans-filtresi `n_trials` çarpanı dahil, Divan oturum-03) bugün uygulanabilir, Vites
+B'de kalan altı metodoloji kararı onaylanmadan hiçbir kol `fark_olculdu` hükmü taşıyamaz.
