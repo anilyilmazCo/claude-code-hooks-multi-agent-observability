@@ -46,8 +46,11 @@
       <BaselineKarsilastirmaSatiri :bk="kol.baseline_karsilastirma" />
     </div>
 
+    <!-- Bulgu bloğu kanit_vitrini'ye KİLİTLİ DEĞİL: mekanizma notları (§4.2
+         gibi) kanıt-vitrini olmayan kollarda da görünebilir; kanit_vitrini
+         yalnız zorunluluğu belirler (spec §4 tablosu), varlığı değil. -->
     <div
-      v-if="kol.kanit_vitrini && kol.bulgu"
+      v-if="kol.bulgu"
       class="rounded border border-[var(--hakem)] bg-[rgba(167,139,250,0.08)] px-2 py-1.5"
     >
       <span class="km-mono text-[10px] font-bold text-[var(--hakem)]">{{ kol.bulgu.karar_sikki ?? 'BULGU BEKLENİYOR' }}</span>

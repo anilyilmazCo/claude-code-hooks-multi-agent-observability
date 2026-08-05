@@ -174,6 +174,9 @@ export interface MonteCarloOzeti {
   yuzdelikler: { p05: number; p25: number; p50: number; p75: number; p95: number } | null;
   gozlenen: number | null;
   metrik: string | null;
+  // Faz C: her replikasyonun GERÇEK kümülatif yolu ("ışın demeti") - ortak
+  // x-eksenine hizalı, kısa yollar `null` ile doldurulmuş (uydurulmuş devam yok).
+  yollar: (number | null)[][] | null;
 }
 
 // H4: simetri denetimi - fark>5pp VE oran>1.5x -> basarisiz, tek biri -> sari

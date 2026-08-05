@@ -35,7 +35,12 @@
           <td class="pr-2 text-right text-[var(--durdu)]" style="font-variant-numeric: tabular-nums">{{ fmtYuzde(s.maxdd) }}</td>
           <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.pf) }}</td>
           <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtSayi(s.sharpe) }}</td>
-          <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ nTrials === null ? '—' : fmtSayi(s.dsr) }}</td>
+          <td class="pr-2 text-right" style="font-variant-numeric: tabular-nums">
+            <span
+              class="px-1 rounded border"
+              :class="(nTrials === null || s.dsr === null) ? 'border-dashed border-[var(--metin-soluk)] text-[var(--metin-soluk)]' : 'border-transparent text-[var(--metin)]'"
+            >{{ (nTrials === null || s.dsr === null) ? 'DSR YOK' : fmtSayi(s.dsr) }}</span>
+          </td>
           <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ nTrials ?? '—' }}</td>
           <td class="pr-2 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtOran(s.persistence) }}</td>
           <td class="pr-2 text-right" style="font-variant-numeric: tabular-nums" :class="deltaBaselineRengi(s)">{{ deltaBaselineMetni(s) }}</td>

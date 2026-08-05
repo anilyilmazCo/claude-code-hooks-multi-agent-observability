@@ -10,15 +10,24 @@
       <div v-else ref="grafikKapsayici" class="h-40"></div>
     </div>
     <div class="rounded-lg border border-[var(--cizgi)] bg-[var(--panel)] p-3">
-      <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] block mb-2">
-        MC yelpazesi{{ kol.mc?.metrik ? ` — ${kol.mc.metrik}` : '' }}
-      </span>
-      <div class="h-40 flex flex-col justify-center gap-2">
-        <McGosterge :mc="kol.mc" />
-        <p class="text-[10px] text-[var(--metin-soluk)]">
-          Y ekseni equity paneliyle ORTAK ÖLÇEKTE DEĞİLDİR (farklı birimler).
-        </p>
+      <div class="flex items-baseline justify-between gap-2 mb-2">
+        <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)]">
+          MC yelpazesi — ışın demeti{{ kol.mc?.metrik ? ` (${kol.mc.metrik})` : '' }}
+        </span>
+        <span v-if="kol.mc?.replikasyon" class="km-mono text-[10px] text-[var(--metin-soluk)]">
+          {{ kol.mc.replikasyon }} replikasyon
+        </span>
       </div>
+      <div v-if="!yollarVar" class="h-40 flex items-center justify-center text-[11px] text-[var(--metin-soluk)]">
+        veri yok — eşleştirilmiş-rastgele üretilemedi
+      </div>
+      <div v-else ref="isinKapsayici" class="h-28"></div>
+      <McGosterge :mc="kol.mc" class="mt-2" />
+      <p class="text-[10px] text-[var(--metin-soluk)] mt-1">
+        Işın demeti = her replikasyonun GERÇEK kümülatif getiri yolu (işlem
+        indeksine göre, takvim zamanına göre değil). Y ekseni equity
+        paneliyle ORTAK ÖLÇEKTE DEĞİLDİR.
+      </p>
     </div>
   </div>
 </template>
@@ -35,9 +44,12 @@ const props = defineProps<{ kol: Kol }>();
 const surtunmesiz = computed(() => props.kol.defterler?.surtunmesiz?.equity_serisi ?? null);
 const gercekMaliyet = computed(() => props.kol.defterler?.gercek_maliyet?.equity_serisi ?? null);
 const veriVar = computed(() => (surtunmesiz.value?.length ?? 0) > 0 || (gercekMaliyet.value?.length ?? 0) > 0);
+const yollarVar = computed(() => (props.kol.mc?.yollar?.length ?? 0) > 0);
 
 const grafikKapsayici = ref<HTMLDivElement | null>(null);
+const isinKapsayici = ref<HTMLDivElement | null>(null);
 let grafik: uPlot | null = null;
+let isinGrafik: uPlot | null = null;
 
 function seriDonustur(seri: { damga: string | null; deger: number | null }[] | null): [number[], (number | null)[]] {
   const damgalar: number[] = [];
@@ -81,7 +93,38 @@ function ciz() {
   }, dizi, grafikKapsayici.value);
 }
 
-onMounted(ciz);
-onUnmounted(() => grafik?.destroy());
+// Işın demeti: her replikasyonun GERÇEK yolu ince/soluk bir çizgi olarak
+// çizilir - dekoratif fan DEĞİL, gerçek simülasyon çıktısı üst üste.
+function isinCiz() {
+  if (!isinKapsayici.value || !yollarVar.value) return;
+  isinGrafik?.destroy();
+
+  const yollar = props.kol.mc!.yollar!;
+  const x = yollar[0].map((_, i) => i); // işlem indeksi, takvim zamanı değil
+  const dizi: uPlot.AlignedData = [x, ...yollar];
+
+  const genislik = isinKapsayici.value.clientWidth || 320;
+  isinGrafik = new uPlot({
+    width: genislik,
+    height: 112,
+    legend: { show: false },
+    cursor: { show: false },
+    // x ekseni İŞLEM İNDEKSİ (0,1,2,...), takvim zamanı DEĞİL - uPlot
+    // varsayılanı x'i unix zaman damgası sanıp saat etiketi basar, kapatılır.
+    scales: { x: { time: false } },
+    axes: [
+      { stroke: 'var(--metin-soluk)', grid: { show: false }, label: 'işlem indeksi' },
+      { stroke: 'var(--metin-soluk)', grid: { stroke: 'var(--cizgi)' } }
+    ],
+    series: [
+      {},
+      ...yollar.map(() => ({ stroke: 'rgba(138,226,52,0.22)', width: 1, points: { show: false } }))
+    ]
+  }, dizi, isinKapsayici.value);
+}
+
+onMounted(() => { ciz(); isinCiz(); });
+onUnmounted(() => { grafik?.destroy(); isinGrafik?.destroy(); });
 watch(() => [props.kol.defterler?.surtunmesiz?.equity_serisi, props.kol.defterler?.gercek_maliyet?.equity_serisi], ciz);
+watch(() => props.kol.mc?.yollar, isinCiz);
 </script>

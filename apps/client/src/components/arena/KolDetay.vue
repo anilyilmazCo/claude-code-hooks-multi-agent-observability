@@ -18,9 +18,31 @@
         <EquityMcPaneli :kol="kol" class="mb-4" />
 
         <div class="mb-4">
-          <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] block mb-1">walk-forward pencereleri</span>
+          <span class="text-[10px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] block mb-1">walk-forward pencereleri — büyük görünüm</span>
           <div v-if="!kol.walk_forward || kol.walk_forward.length === 0" class="text-[11px] text-[var(--metin-soluk)]">veri yok</div>
-          <table v-else class="w-full text-[11px] km-mono">
+          <template v-else>
+            <div class="flex items-end gap-1 h-32 border-b border-[var(--cizgi)] pb-1 mb-1">
+              <div
+                v-for="p in kol.walk_forward" :key="'bar-' + (p.sira ?? Math.random())"
+                class="flex-1 flex flex-col justify-end items-center gap-0.5 h-full"
+                :title="`pencere ${p.sira ?? '?'}: sharpe ${p.sharpe?.toFixed(2) ?? '—'} · ${p.baslangic ?? '?'} → ${p.bitis ?? '?'}`"
+              >
+                <span class="text-[9px] km-mono" :class="p.sharpe && p.sharpe > 0 ? 'text-[var(--akis)]' : 'text-[var(--durdu)]'">
+                  {{ p.sharpe?.toFixed(1) ?? '—' }}
+                </span>
+                <div
+                  class="w-full rounded-sm min-h-[2px]"
+                  :style="{ height: wfBarYuksekligi(p.sharpe) + '%', background: p.sharpe && p.sharpe > 0 ? 'var(--akis)' : 'var(--durdu)' }"
+                ></div>
+              </div>
+            </div>
+            <div class="flex gap-1 mb-2">
+              <span v-for="p in kol.walk_forward" :key="'lbl-' + (p.sira ?? Math.random())" class="flex-1 text-center text-[9px] text-[var(--metin-soluk)]">
+                {{ p.sira ?? '—' }}
+              </span>
+            </div>
+          </template>
+          <table v-if="kol.walk_forward && kol.walk_forward.length > 0" class="w-full text-[11px] km-mono">
             <thead>
               <tr class="text-[9px] tracking-[0.1em] uppercase text-[var(--metin-soluk)] text-left border-b border-[var(--cizgi)]">
                 <th class="py-1 pr-2 font-normal">#</th>
@@ -52,7 +74,7 @@
           </p>
         </div>
 
-        <div v-if="kol.kanit_vitrini && kol.bulgu" class="rounded border border-[var(--hakem)] bg-[rgba(167,139,250,0.08)] px-3 py-2">
+        <div v-if="kol.bulgu" class="rounded border border-[var(--hakem)] bg-[rgba(167,139,250,0.08)] px-3 py-2">
           <span class="km-mono text-xs font-bold text-[var(--hakem)]">{{ kol.bulgu.karar_sikki ?? 'BULGU BEKLENİYOR' }}</span>
           <p v-if="kol.bulgu.dayaniklilik" class="text-[11px] text-[var(--metin-soluk)] mt-1">{{ kol.bulgu.dayaniklilik }}</p>
           <p v-if="kol.bulgu.geri_cekilen_iddialar?.length" class="text-[11px] text-[var(--durdu)] mt-1">
@@ -66,10 +88,21 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import type { Kol } from '../../composables/useArenaDurum';
 import LigRozeti from './LigRozeti.vue';
 import EquityMcPaneli from './EquityMcPaneli.vue';
 
-defineProps<{ kol: Kol | null }>();
+const props = defineProps<{ kol: Kol | null }>();
 const emit = defineEmits<{ kapat: [] }>();
+
+const wfMaxMutlak = computed(() => {
+  const degerler = (props.kol?.walk_forward ?? []).map(p => Math.abs(p.sharpe ?? 0));
+  return Math.max(...degerler, 0.01);
+});
+
+function wfBarYuksekligi(sharpe: number | null | undefined): number {
+  if (sharpe === null || sharpe === undefined) return 8;
+  return Math.max(8, Math.min(100, (Math.abs(sharpe) / wfMaxMutlak.value) * 100));
+}
 </script>
