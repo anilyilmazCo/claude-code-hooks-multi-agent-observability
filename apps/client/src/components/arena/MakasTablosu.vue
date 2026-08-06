@@ -140,6 +140,7 @@ function isaretRengi(v: number | null): string {
 function deltaBaselineMetni(s: Satir): string {
   const bk = s.kol.baseline_karsilastirma;
   if (bk?.simetri_sonucu === 'basarisiz') return 'BLOKLANDI';
+  if (bk?.simetri_sonucu === 'uygulanamaz') return 'UYGULANAMAZ';
   if (bk?.simetri_sonucu === 'yetersiz') return 'YETERSİZ';
   if (bk?.ayrilabildi_mi === false) return 'AYRILAMADI';
   if (bk?.delta_sharpe == null) return 'veri yok';
@@ -148,7 +149,13 @@ function deltaBaselineMetni(s: Satir): string {
 }
 function deltaBaselineRengi(s: Satir): string {
   const bk = s.kol.baseline_karsilastirma;
-  if (bk?.simetri_sonucu === 'basarisiz' || bk?.simetri_sonucu === 'yetersiz' || bk?.ayrilabildi_mi === false || bk?.delta_sharpe == null) {
+  if (
+    bk?.simetri_sonucu === 'basarisiz' ||
+    bk?.simetri_sonucu === 'uygulanamaz' ||
+    bk?.simetri_sonucu === 'yetersiz' ||
+    bk?.ayrilabildi_mi === false ||
+    bk?.delta_sharpe == null
+  ) {
     return 'text-[var(--metin-soluk)]';
   }
   return 'text-[var(--metin)]';

@@ -6,6 +6,9 @@
   <p v-if="bk?.simetri_sonucu === 'basarisiz'" class="text-[10px] text-[var(--durdu)] pl-2">
     SİMETRİ DENETİMİ BAŞARISIZ — sayı yayımlanamaz
   </p>
+  <p v-else-if="bk?.simetri_sonucu === 'uygulanamaz'" class="text-[10px] text-[var(--metin-soluk)] pl-2">
+    {{ bk.simetri_notu ?? 'UYGULANAMAZ — bu enstrüman/aralıkta test yapısal olarak koşulamaz' }}
+  </p>
   <p v-else-if="bk?.simetri_sonucu === 'yetersiz'" class="text-[10px] text-[var(--metin-soluk)] pl-2">
     {{ bk.simetri_notu ?? 'YETERSİZ — devam (taban altında)' }}
   </p>
@@ -13,7 +16,7 @@
     ⚠ {{ bk.simetri_notu ?? 'simetri sınırda, tek ölçüt aşıldı' }}
   </p>
   <p v-else-if="bk?.simetri_sonucu === 'hesaplanamadi'" class="text-[10px] text-[var(--metin-soluk)] pl-2">
-    simetri denetimi hesaplanamadı (payda sıfır)
+    simetri denetimi hesaplanamadı (tutma süresi örneği yok)
   </p>
 </template>
 
@@ -25,6 +28,7 @@ const props = defineProps<{ bk: BaselineKarsilastirma | null }>();
 
 const metin = computed(() => {
   if (props.bk?.simetri_sonucu === 'basarisiz') return 'BLOKLANDI';
+  if (props.bk?.simetri_sonucu === 'uygulanamaz') return 'UYGULANAMAZ';
   if (props.bk?.simetri_sonucu === 'yetersiz') return 'YETERSİZ — devam';
   if (props.bk?.ayrilabildi_mi === false) return 'AYRILAMADI';
   if (props.bk?.delta_sharpe === null || props.bk?.delta_sharpe === undefined) return 'veri yok';
@@ -32,10 +36,16 @@ const metin = computed(() => {
   return `${isaret}${props.bk.delta_sharpe.toFixed(2)} Sharpe`;
 });
 
-// AYRILAMADI/BLOKLANDI/YETERSİZ nötr renkte - yeşil/kırmızı boyanmış bir
-// "ayrılamadı" hükmü yanlış okumaya davettir (spec §3.1).
+// AYRILAMADI/BLOKLANDI/YETERSİZ/UYGULANAMAZ nötr renkte - yeşil/kırmızı
+// boyanmış bir "ayrılamadı" hükmü yanlış okumaya davettir (spec §3.1).
 const renkSinifi = computed(() => {
-  if (props.bk?.simetri_sonucu === 'basarisiz' || props.bk?.simetri_sonucu === 'yetersiz' || props.bk?.ayrilabildi_mi === false || props.bk?.delta_sharpe == null) {
+  if (
+    props.bk?.simetri_sonucu === 'basarisiz' ||
+    props.bk?.simetri_sonucu === 'uygulanamaz' ||
+    props.bk?.simetri_sonucu === 'yetersiz' ||
+    props.bk?.ayrilabildi_mi === false ||
+    props.bk?.delta_sharpe == null
+  ) {
     return 'text-[var(--metin-soluk)]';
   }
   return 'text-[var(--metin)]';

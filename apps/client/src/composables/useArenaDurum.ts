@@ -179,10 +179,13 @@ export interface MonteCarloOzeti {
   yollar: (number | null)[][] | null;
 }
 
-// H4: simetri denetimi - fark>5pp VE oran>1.5x -> basarisiz, tek biri -> sari
-// 'yetersiz': H4 eki (Faz B.6) - her iki tarafta >=30 işlem birikmeden
-// hüküm verilmez (gri, sayı yayımlanmaz, BAŞARISIZ denmez).
-export type SimetriSonucu = 'simetrik' | 'sari' | 'basarisiz' | 'hesaplanamadi' | 'yetersiz';
+// SS4.2 v2 (dhr-2, 2026-08-06): düşme-oranı karşılaştırması EMEKLİ - yerine
+// KS(tutma-süresi dağılımı) + maruziyet-z. D > kritik(α=0,01) VE D > 0,10 ->
+// basarisiz; tek koşul ya da maruziyet z>3 -> sari. 'yetersiz': ρ̂₁-düzeltmeli
+// n_eff < taban (93) ama test ilkede koşulabilir. 'uygulanamaz': bu
+// enstrüman/aralıkta test yapısal olarak hiç koşulamaz (fizibilite sınırı
+// aşıldı). Detay: 05_strateji_lab/divan/2026-08-06-oturum-05-simetri-metodolojisi-v2.md#9
+export type SimetriSonucu = 'simetrik' | 'sari' | 'basarisiz' | 'hesaplanamadi' | 'yetersiz' | 'uygulanamaz';
 
 export interface BaselineKarsilastirma {
   baseline_id: string | null;
