@@ -39,10 +39,10 @@
           <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums">
             <span
               class="px-1 rounded border"
-              :class="(nTrials === null || s.dsr === null) ? 'border-dashed border-[var(--metin-soluk)] text-[var(--metin-soluk)]' : 'border-transparent text-[var(--metin)]'"
-            >{{ (nTrials === null || s.dsr === null) ? 'DSR YOK' : fmtSayi(s.dsr) }}</span>
+              :class="(satirNTrials(s) === null || s.dsr === null) ? 'border-dashed border-[var(--metin-soluk)] text-[var(--metin-soluk)]' : 'border-transparent text-[var(--metin)]'"
+            >{{ (satirNTrials(s) === null || s.dsr === null) ? 'DSR YOK' : fmtSayi(s.dsr) }}</span>
           </td>
-          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ nTrials ?? '—' }}</td>
+          <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ satirNTrials(s) ?? '—' }}</td>
           <td class="pr-1.5 text-right text-[var(--metin)]" style="font-variant-numeric: tabular-nums">{{ fmtOran(s.persistence) }}</td>
           <td class="pr-1.5 text-right" style="font-variant-numeric: tabular-nums" :class="deltaBaselineRengi(s)">{{ deltaBaselineMetni(s) }}</td>
           <td class="text-right font-bold text-[var(--arena)]" style="font-variant-numeric: tabular-nums">{{ s.makas === null ? 'veri yok' : fmtPuan(s.makas) }}</td>
@@ -70,10 +70,13 @@ function ligKenarStili(lig: Lig | null): Record<string, string> {
 const props = defineProps<{ kollar: Kol[] | null; terazi?: TeraziKunyesi | null }>();
 const emit = defineEmits<{ sec: [kol: Kol] }>();
 
-// n_trials panel-geneli terazi'den gelir - DSR/N sütunları §2.2 pazarlık
-// dışı kuralı gereği ikisi birlikte var/yok olur, satır kendi başına
-// n_trials taşımaz (deflated Sharpe'ın girdisi tüm harness için ortaktır).
-const nTrials = computed(() => props.terazi?.n_trials ?? null);
+// n_trials KOL-BAŞINA okunur (dhr-2 sonrası): kampanya kolları farklı
+// (kampanya-geneli) bir n_trials taşır, terazi.n_trials yalnız elle tanımlı
+// harness kolları için doğrudur. terazi'ninki yalnız kol kendi n_trials'ını
+// taşımıyorsa (eski/eksik veri) yedek olarak kullanılır.
+function satirNTrials(s: Satir): number | null {
+  return s.kol.n_trials ?? props.terazi?.n_trials ?? null;
+}
 
 interface Satir {
   id: string; ad: string; kol: Kol;

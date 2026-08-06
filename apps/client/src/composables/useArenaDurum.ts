@@ -65,6 +65,11 @@ export interface Kol {
   mc: MonteCarloOzeti | null;
   baseline_karsilastirma: BaselineKarsilastirma | null;
   varlik_id: string | null;
+  // Kol-başına DSR çekirdeği (dhr-2 sonrası, kampanya v0). terazi.n_trials
+  // yalnız TEK kaynaklı harness'lerde (örn. 3 elle tanımlı kol) doğrudur;
+  // kampanya kolları FARKLI (kampanya-geneli) bir n_trials taşır - panelde
+  // DSR yanında bunu göster, terazi'ninkini DEĞİL.
+  n_trials: number | null;
 }
 
 export interface RejimInanc {
@@ -144,6 +149,13 @@ export interface EsikKaydi {
   kaynak: string | null;
 }
 
+export interface KampanyaOzeti {
+  uretilen: number | null;
+  sag_kalan: number | null;
+  mezarlik: number | null;
+  n_trials: number | null;
+}
+
 export interface TeraziKunyesi {
   harness_surumu: string | null;
   maliyet_modeli: string | null;
@@ -156,6 +168,7 @@ export interface TeraziKunyesi {
   esikler: EsikKaydi[] | null;
   kosum_damgasi: string | null;
   artefakt_sha256: string | null;
+  kampanya: KampanyaOzeti | null; // kampanya motoru v0 - üretilen/sağ kalan/mezarlık sayaçları
 }
 
 export interface WalkForwardPencere {

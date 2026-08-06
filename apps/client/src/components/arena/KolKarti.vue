@@ -65,13 +65,13 @@
         </div>
         <div class="rounded border border-[var(--cizgi)] km-katman km-derinlik px-2 py-1.5 flex-1 flex flex-col justify-center min-w-0">
           <span class="block text-[8px] tracking-[0.14em] uppercase text-[var(--metin-soluk)]">DSR</span>
-          <span v-if="dsrDeger !== null && terazi?.n_trials != null" class="km-mono text-[16px] font-bold leading-tight" style="font-variant-numeric: tabular-nums; color: var(--metin-parlak)">{{ dsrDeger.toFixed(2) }}</span>
+          <span v-if="dsrDeger !== null && kolNTrials != null" class="km-mono text-[16px] font-bold leading-tight" style="font-variant-numeric: tabular-nums; color: var(--metin-parlak)">{{ dsrDeger.toFixed(2) }}</span>
           <span v-else class="text-[10px] text-[var(--metin-soluk)] leading-tight">n_trials YOK</span>
         </div>
       </div>
     </div>
 
-    <DsrRozeti :deger="dsrDeger" :n-trials="terazi?.n_trials ?? null" />
+    <DsrRozeti :deger="dsrDeger" :n-trials="kolNTrials" />
     <WfSerit :pencereler="kol.walk_forward" />
     <McGosterge :mc="kol.mc" />
 
@@ -113,6 +113,9 @@ const props = defineProps<{ kol: Kol; terazi?: TeraziKunyesi | null }>();
 const emit = defineEmits<{ sec: [kol: Kol] }>();
 
 const dsrDeger = computed(() => props.kol.defterler?.gercek_maliyet?.deflated_sharpe ?? null);
+// Kol-başına okunur (dhr-2 sonrası): kampanya kolları terazi'den FARKLI bir
+// n_trials taşır; terazi.n_trials yalnız eski/eksik veride yedek.
+const kolNTrials = computed(() => props.kol.n_trials ?? props.terazi?.n_trials ?? null);
 
 const makasMetni = computed(() => {
   const g = props.kol.defterler?.gercek_maliyet?.net_getiri_yuzde;

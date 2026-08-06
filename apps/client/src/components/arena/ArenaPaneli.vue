@@ -57,6 +57,11 @@
       <h2 class="text-[10px] tracking-[0.14em] uppercase text-[var(--metin-soluk)] mb-1.5 border-l-2 border-[var(--arena)] pl-2">
         KAMPANYA TABLOSU
       </h2>
+      <p v-if="durum.terazi?.kampanya" class="text-[10px] text-[var(--metin-soluk)] mb-1.5 pl-2">
+        kampanya motoru: {{ durum.terazi.kampanya.uretilen }} üretildi ·
+        {{ durum.terazi.kampanya.sag_kalan }} sağ kaldı ·
+        mezarlık: {{ durum.terazi.kampanya.mezarlik }}
+      </p>
       <MakasTablosu :kollar="tumKollar" :terazi="durum.terazi" @sec="secilenKol = $event" />
     </section>
 
