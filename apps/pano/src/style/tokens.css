@@ -1,0 +1,58 @@
+/* PANO tasarım token'ları — tahlil-odası tezi (bkz. rapor: Opus tasarım turu).
+   KOMUTA panelinin (apps/client) hiçbir CSS'ini import ETMEZ - ayrı ürün. */
+
+@import url('https://fonts.googleapis.com/css2?family=Spectral:wght@200;300;400&family=Archivo:wght@400;500;600&family=Archivo+Narrow:wght@500;600&display=swap');
+
+:root {
+  /* --- Renk: sıcak kömür-kahve zemin, TEK altın vurgu --- */
+  --zemin: #1c1714;
+  --yuzey: #241e19;
+  --yuzey-2: #2e2620;
+  --cizgi: #3a312a;
+  --metin: #f2ebe1;
+  --metin-2: #a89c8e;
+  --metin-3: #8a7e71;
+  --altin: #e6b450;
+  --altin-parlak: #f2ce84;
+  --altin-derin: #8a6420;
+  --gecti: #7fa88c;
+  --elendi: #a96a6e;
+
+  /* --- Gölge + iç kenar --- */
+  --ic-kenar: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  --golge-1: 0 1px 2px rgba(0, 0, 0, 0.32), 0 2px 8px rgba(0, 0, 0, 0.22);
+  --golge-2: 0 2px 4px rgba(0, 0, 0, 0.34), 0 8px 24px rgba(0, 0, 0, 0.3);
+  --golge-3: 0 4px 8px rgba(0, 0, 0, 0.36), 0 20px 56px rgba(0, 0, 0, 0.38);
+
+  /* --- Köşe --- */
+  --r-s: 4px;
+  --r-m: 10px;
+  --r-l: 14px;
+
+  /* --- Boşluk skalası --- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 72px;
+  --sp-9: 112px;
+
+  /* --- Tipografi aileleri --- */
+  --f-display: 'Spectral', Georgia, serif;
+  --f-govde: 'Archivo', system-ui, sans-serif;
+  --f-dar: 'Archivo Narrow', system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --gecis-suresi: 0ms;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  :root {
+    --gecis-suresi: 200ms;
+  }
+}
