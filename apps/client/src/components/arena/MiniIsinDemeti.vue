@@ -64,12 +64,25 @@ function isinRengi(i: number): string {
   return `rgba(138,226,52,${alfa.toFixed(3)})`;
 }
 
+// Math.min/max(...dizi) BÜYÜK dizilerde "Maximum call stack size exceeded"
+// verir (spread her elemanı ayrı argümana çevirir, motor argüman sınırını
+// aşar) - XAUUSD'nin gerçek aday sayısı BTC demo verisinden çok büyük olunca
+// yakalandı (2026-08-06). Döngü tabanlı, dizi boyutundan bağımsız güvenli.
+function guvenliMinMax(dizi: number[]): [number, number] {
+  let min = dizi[0];
+  let max = dizi[0];
+  for (const v of dizi) {
+    if (v < min) min = v;
+    if (v > max) max = v;
+  }
+  return [min, max];
+}
+
 function noktalarDiz(degerDizisi: (number | null)[][], yAlt: number, yUst: number): string[] {
   const tumDegerler: number[] = [];
   for (const d of degerDizisi) for (const v of d) if (v !== null) tumDegerler.push(v);
   if (tumDegerler.length < 2) return [];
-  const min = Math.min(...tumDegerler);
-  const max = Math.max(...tumDegerler);
+  const [min, max] = guvenliMinMax(tumDegerler);
   const aralik = max - min || 1;
   return degerDizisi.map(d => {
     const n = d.length;
@@ -91,8 +104,9 @@ function tekSeriNoktalari(seri: { deger: number | null }[] | null, yAlt: number,
   if (!seri) return [];
   const gecerliDegerler = seri.map(n => n.deger).filter((v): v is number => v !== null);
   if (gecerliDegerler.length < 2) return [];
-  const min = ortakMin ?? Math.min(...gecerliDegerler);
-  const maks = ortakMaks ?? Math.max(...gecerliDegerler);
+  const [minHesap, maksHesap] = guvenliMinMax(gecerliDegerler);
+  const min = ortakMin ?? minHesap;
+  const maks = ortakMaks ?? maksHesap;
   const aralik = maks - min || 1;
   const n = seri.length;
   const noktalar: Nokta[] = [];
@@ -123,7 +137,8 @@ const ortakEquityAralik = computed(() => {
   const tum = [...(gercekSeri.value ?? []), ...(surtunmesizSeri.value ?? [])]
     .map(n => n.deger).filter((v): v is number => v !== null);
   if (tum.length < 2) return { min: null, maks: null };
-  return { min: Math.min(...tum), maks: Math.max(...tum) };
+  const [min, maks] = guvenliMinMax(tum);
+  return { min, maks };
 });
 
 const gercekNoktaListesi = computed(() => tekSeriNoktalari(gercekSeri.value, Y_ALT, Y_UST, ortakEquityAralik.value.min, ortakEquityAralik.value.maks));
