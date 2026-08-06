@@ -16,9 +16,11 @@
             <th>Getiri %</th>
             <th>Kazanma %</th>
             <th>Maks Düşüş %</th>
+            <th><SozlukTerimi anahtar="pf">PF</SozlukTerimi></th>
+            <th><SozlukTerimi anahtar="sharpe">Sharpe</SozlukTerimi></th>
             <th>İşlem</th>
             <th class="th-sol">Durum</th>
-            <th>Ayar</th>
+            <th><SozlukTerimi anahtar="ayar_damgasi">Ayar</SozlukTerimi></th>
           </tr>
         </thead>
         <tbody>
@@ -38,6 +40,8 @@
               </td>
               <td class="tabular">{{ fmtYuzde(aday.defterler.gercek_maliyet.kazanma_orani_yuzde) }}</td>
               <td class="tabular durdu">{{ fmtYuzde(aday.defterler.gercek_maliyet.max_dd_yuzde) }}</td>
+              <td class="tabular">{{ fmtSayi(aday.defterler.gercek_maliyet.profit_factor) }}</td>
+              <td class="tabular">{{ fmtSayi(aday.defterler.gercek_maliyet.sharpe) }}</td>
               <td class="tabular">{{ aday.defterler.gercek_maliyet.islem_sayisi }}</td>
               <td>
                 <span class="cip" :class="aday.sag_kaldi_mi ? 'cip--gecti' : 'cip--elendi'">
@@ -48,7 +52,7 @@
             </tr>
             <tr v-if="!aday.sag_kaldi_mi" class="satir-neden">
               <td></td>
-              <td colspan="7">└ {{ sadeNeden(aday.eleme_nedeni) }}</td>
+              <td colspan="9">└ {{ sadeNeden(aday.eleme_nedeni) }}</td>
             </tr>
           </template>
         </tbody>
